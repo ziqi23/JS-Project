@@ -12,7 +12,6 @@ class Data {
                 return response.json()
             })
             .then((res) => {
-                // console.log(res)
                 return res.Results.series[0].data.reverse();
             })
     }
@@ -33,6 +32,16 @@ class Data {
             })
             .then((res) => {
                 return res.Results.series[0].data.reverse();
+            })
+    }
+
+    async fetchCpiData(startYear, endYear) {
+        return fetch(`https://data.nasdaq.com/api/v3/datasets/RATEINF/CPI_USA?start_date=${startYear}-01-01&end_date=${endYear}-12-31&api_key=z4ZhwWk_L5Tp-MszdTFD`)
+            .then(async function (response) {
+                return response.json() 
+            })
+            .then((res) => {
+                return res.dataset.data.reverse();
             })
     }
 }
