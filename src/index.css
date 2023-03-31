@@ -1,0 +1,21 @@
+
+.right{
+    width: 200px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+#home {
+    font-size: 36px;
+    background-color: azure;
+}
+
+#github {
+    font-size: 24px;
+}
+
+#linkedin {
+    font-size: 24px;
+}
