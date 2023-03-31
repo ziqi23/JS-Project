@@ -24,22 +24,33 @@ Technologies, Libraries & APIs
 
 Implementation Timeline:
     Friday (3/31) 
-        - Create HTML skeleton.
-        - Implement JS logic to handle events.
-        - Find D3 and Three.js tutorials and familiarize with their API.
+
+    - Create HTML skeleton.
+    - Implement JS logic to handle events.
+    - Find D3 and Three.js tutorials and familiarize with their API.
+    
     Saturday (4/1)
-        - Pull data from the free sources listed above.
-        - Format data and implement JS logic to create graphs on demand.
-        - Hide graphs until the user clicks on a certain trigger, then display via tooltip.
+
+    - Pull data from the free sources listed above.
+    - Format data and implement JS logic to create graphs on demand.
+    - Hide graphs until the user clicks on a certain trigger, then display via tooltip.
+
     Sunday (4/2)
-        - Deeper dive into Three.js and its capabilities.
-        - Format website to incorporate this functionality.
+
+    - Deeper dive into Three.js and its capabilities.
+    - Format website to incorporate this functionality.
+
     Monday (4/3)
-        - Deeper dive into Three.js and its capabilities.
-        - Format website to incorporate this functionality.
+
+    - Deeper dive into Three.js and its capabilities.
+    - Format website to incorporate this functionality.
+
     Tuesday (4/4)
-        - Deeper dive into Three.js and its capabilities.
-        - Format website to incorporate this functionality.
+
+    - Deeper dive into Three.js and its capabilities.
+    - Format website to incorporate this functionality.
+
     Wednesday (4/5)
-        - Deeper dive into Three.js and its capabilities.
-        - Format website to incorporate this functionality.
+
+    - Deeper dive into Three.js and its capabilities.
+    - Format website to incorporate this functionality.
