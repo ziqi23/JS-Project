@@ -23,6 +23,7 @@ Technologies, Libraries & APIs
     5- BLS data API
 
 Implementation Timeline:
+
     Friday (3/31) 
 
     - Create HTML skeleton.
