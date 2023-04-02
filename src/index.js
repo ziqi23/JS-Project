@@ -9,45 +9,45 @@ import WorldLogic from './scripts/worldLogic.js';
 const cpiGraph = document.getElementById("svg-graph");
 const eciGraph = document.getElementById("eci-graph");
 
-async function createEciGraph(startYear, endYear, type="general") {
-    let d = new Data();
-    let g = new CreateGraph();
-    let dataset;
-    if (type === "general") {
-        dataset = await d.fetchRegularEciData(startYear, endYear);
-    } else {
-        dataset = await d.fetchEciDataByIndustry(type, startYear, endYear)
-    }
-    g.createEciGraph(dataset, startYear, endYear)
-}
+// async function createEciGraph(startYear, endYear, type="general") {
+//     let d = new Data();
+//     let g = new CreateGraph();
+//     let dataset;
+//     if (type === "general") {
+//         dataset = await d.fetchRegularEciData(startYear, endYear);
+//     } else {
+//         dataset = await d.fetchEciDataByIndustry(type, startYear, endYear)
+//     }
+//     g.createEciGraph(dataset, startYear, endYear)
+// }
 
-// createEciGraph(2012, 2022, "professionalServices");
+// // createEciGraph(2012, 2022, "professionalServices");
 
-async function createCpiGraph(startYear, endYear) {
-    let d = new Data();
-    let g = new CreateGraph();
-    let dataset = await d.fetchCpiData(startYear, endYear);
+// async function createCpiGraph(startYear, endYear) {
+//     let d = new Data();
+//     let g = new CreateGraph();
+//     let dataset = await d.fetchCpiData(startYear, endYear);
     
-    g.createCpiGraph(dataset, startYear, endYear)
-}
+//     g.createCpiGraph(dataset, startYear, endYear)
+// }
 
-createCpiGraph(2015, 2023);
+// createCpiGraph(2015, 2023);
 
-let toggleButton = document.getElementById("toggle-graph");
-let goodsButton = document.getElementById("goods");
-let servicesButton = document.getElementById("services");
+// let toggleButton = document.getElementById("toggle-graph");
+// let goodsButton = document.getElementById("goods");
+// let servicesButton = document.getElementById("services");
 
-toggleButton.addEventListener('click', handleClick);
+// toggleButton.addEventListener('click', handleClick);
 
-function handleClick(e) {
-    e.preventDefault();
-    // console.log(el.style.display)
-    if (cpiGraph.getAttribute("visibility") === "visible") {
-        cpiGraph.setAttribute("visibility", "hidden");
-    } else {
-        cpiGraph.setAttribute("visibility", "visible");
-    }
-}
+// function handleClick(e) {
+//     e.preventDefault();
+//     // console.log(el.style.display)
+//     if (cpiGraph.getAttribute("visibility") === "visible") {
+//         cpiGraph.setAttribute("visibility", "hidden");
+//     } else {
+//         cpiGraph.setAttribute("visibility", "visible");
+//     }
+// }
 
 // goodsButton.addEventListener('click', handleGoodsClick);
 

@@ -23,6 +23,7 @@ class World {
         const plane = new THREE.Mesh( geometry, material );
         plane.rotation.x = Math.PI / 2;
         plane.receiveShadow = true;
+        plane.name = "plane"
         scene.add( plane );
 
         // Initialize mock sky (Currently only in one direction)

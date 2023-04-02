@@ -129,10 +129,59 @@ class WorldLogic {
             }
         }
 
+        // Construct arrow/beam
+        const raycaster = new THREE.Raycaster();
+        const mousePos = new THREE.Vector2();
+        window.addEventListener('mousemove', handleMouseMoveForRaycaster)
+        let pointingTo = {x: undefined, z: undefined};
+        let canvasWidth = document.getElementsByTagName("canvas")[0].width
+        let canvasHeight = document.getElementsByTagName("canvas")[0].height
+
+        function handleMouseMoveForRaycaster(e) {
+            mousePos.x = (e.clientX / canvasWidth) * 2 - 1;
+            mousePos.y = - ((e.clientY / canvasHeight) * 2 - 1);
+            raycaster.setFromCamera(mousePos, camera)
+            const intersects = raycaster.intersectObjects(scene.children)
+            // console.log(intersects)
+            pointingTo.x = intersects[0].point.x
+            pointingTo.z = intersects[0].point.z
+            // console.log(pointingTo)
+        }
+
+        // Listen for click (and specifically not a drag / camera angle adjustment), use pointingTo to fire object.
+        document.addEventListener("mousedown", handleShoot)
+        let shotObjects = [];
+        function handleShoot() {
+            const ballGeometry = new THREE.SphereGeometry(0.2, 64, 64);
+            const ballMaterial = new THREE.MeshStandardMaterial({color: 0xffff00});
+            const ball = new THREE.Mesh(ballGeometry, ballMaterial);
+            ball.castShadow = true;
+            ball.receiveShadow = true;
+            ball.position.x = objects.box6.position.x;
+            ball.position.z = objects.box6.position.z;
+            ball.position.y = objects.box6.position.y;
+            scene.add(ball);
+            shotObjects.push([ball, pointingTo.x, pointingTo.z]);
+        }
+
         // Main loop to update each frame
         function update() {
             requestAnimationFrame(update)
 
+            // Move all projectiles
+            shotObjects.forEach((ballArray) => {
+                let distance = Math.sqrt(ballArray[1] ** 2 + ballArray[2] ** 2)
+                console.log(distance)
+                ballArray[0].position.x += ballArray[1] / distance;
+                ballArray[0].position.z += ballArray[2] / distance;
+            })
+
+            // Handle collision between projectiles and enemies
+            // scene.children.forEach((object) => {
+            //     if (object.name && object in collision) // Find object
+            //         object.color = object.onHitColor;
+            // })
+            
             // Simulate collision by stopping objects when y-coordinate coincides with ground plane
             // NEED TO FIX - hard coded values based on object height, need a way to get dimension data
             // NEED TO FIX - velocity needs to increase to simulate gravity
