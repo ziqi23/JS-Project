@@ -96,6 +96,25 @@ class WorldLogic {
             }
         }
         
+        // Enemy spawn logic
+        let round = 1;
+        let enemies = [];
+        function gameStart() {
+            for (let i = 0; i < 5 * round; i++) {
+                const enemyGeometry = new THREE.CapsuleGeometry(1, 3, 10, 20);
+                const enemyMaterial = new THREE.MeshStandardMaterial({color: 0x99004c});
+                const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
+                enemy.castShadow = true;
+                enemy.receiveShadow = true;
+                enemy.position.x = (Math.random() - 0.5) * 50;
+                enemy.position.z = Math.random() * -100;
+                enemy.position.y = 1.5;
+                scene.add(enemy);
+                enemies.push(enemy);
+            }
+            round += 1;
+        }
+        
         // Handle data visualization pop up upon user interaction (clicking "enter")
         function handleShowGraph(e) {
             if (e.code === "Enter") {
@@ -167,6 +186,18 @@ class WorldLogic {
         // Main loop to update each frame
         function update() {
             requestAnimationFrame(update)
+            
+            //Handle collision between projectiles and enemies - Map each object to its bounding box
+            let objectsBoundingBox = {}
+
+            scene.children.forEach((object) => {
+                if (objectsBoundingBox[object.uuid] === undefined) {
+                    // console.log("a")
+                    if (object.geometry) {
+                        objectsBoundingBox[object.uuid] = new THREE.Box3().setFromObject(object);
+                    }
+                }
+            })
 
             // Move all projectiles and delete ones that are too far out
             shotObjects.forEach((ballArray) => {
@@ -178,33 +209,65 @@ class WorldLogic {
                 }
             })
 
-            //Handle collision between projectiles and enemies
-            let objectsBoundingBox = {}
-
-            scene.children.forEach((object) => {
-                if (objectsBoundingBox[object.uuid] === undefined) {
-                    // console.log("a")
-                    if (object.geometry) {
-                        objectsBoundingBox[object.uuid] = new THREE.Box3().setFromObject(object);
-                    }
-                }
-            })
-            // console.log(objectsBoundingBox)
-            // Find named objects in the scene
-            // console.log(objectsBoundingBox)
+            // Find objects in the scene and handle collision
             shotObjects.forEach((object) => {
                 scene.children.forEach((object2) => {
-                    console.log(objectsBoundingBox[object.uuid])
-                    if (object.uuid !== object2.uuid && objectsBoundingBox[object.uuid] && objectsBoundingBox[object2.uuid]) {
-                        console.log(objectsBoundingBox[object.uuid],objectsBoundingBox[object2.uuid])
-                        if (objectsBoundingBox[object.uuid].intersectsBox(objectsBoundingBox[object2.uuid])) { 
-                            console.log("collision")
-                            object.collided = true;
+                    if (object[0].uuid !== object2.uuid && objectsBoundingBox[object2.uuid] && object2.name !== "plane" && object2.name !== "sky" && object2.name !== "box6" ) {
+                        if (objectsBoundingBox[object[0].uuid] && objectsBoundingBox[object[0].uuid].intersectsBox(objectsBoundingBox[object2.uuid])) { 
+                            console.log("collision between:", object, object2)
+                            object2.collided = true;
+                            scene.remove(object[0]);
                         }
                     }
                 })
             })
             
+            // Game start condition
+            if (objects.cylinder2.collided === true) {
+                objects.cylinder2.material.color.setHex(0xffff00)
+            }
+            if (objects.cylinder3.collided === true) {
+                objects.cylinder3.material.color.setHex(0x23E937)
+            }
+            if (objects.cylinder4.collided === true) {
+                objects.cylinder4.material.color.setHex(0x273695)
+            }
+            if (objects.cylinder5.collided === true) {
+                objects.cylinder5.material.color.setHex(0xB61D1D)
+            }
+
+            if (objects.cylinder2.collided === true && objects.cylinder3.collided === true && objects.cylinder4.collided === true && objects.cylinder5.collided === true) {
+                gameStart();
+                scene.remove(objects.cylinder2)
+                scene.remove(objects.cylinder3)
+                scene.remove(objects.cylinder4)
+                scene.remove(objects.cylinder5)
+                objects.cylinder2.collided = false;
+                objects.cylinder3.collided = false;
+                objects.cylinder4.collided = false;
+                objects.cylinder5.collided = false;
+                objects.cylinder2.material.color.setHex(0xffffff)
+                objects.cylinder3.material.color.setHex(0xffffff)
+                objects.cylinder4.material.color.setHex(0xffffff)
+                objects.cylinder5.material.color.setHex(0xffffff)
+            }
+
+            // Enemy hit logic
+            enemies.forEach((enemy) => {
+                if (enemy.collided) {
+                    scene.remove(enemy);
+                    enemies.splice(enemies.indexOf(enemy), 1)
+                }
+                console.log(enemies)
+                if (enemies.length === 0) {
+                    console.log("in here")
+                    scene.add(objects.cylinder2)
+                    scene.add(objects.cylinder3)
+                    scene.add(objects.cylinder4)
+                    scene.add(objects.cylinder5)
+                }
+            })
+
             // Simulate collision by stopping objects when y-coordinate coincides with ground plane
             // NEED TO FIX - hard coded values based on object height, need a way to get dimension data
             // NEED TO FIX - velocity needs to increase to simulate gravity

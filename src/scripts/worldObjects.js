@@ -4,7 +4,7 @@ class WorldObjects {
     constructor(world) {
         // Construct Cylinder 1
         const geometry2 = new THREE.CylinderGeometry( 1, 1, 3, 20);
-        const material2 = new THREE.MeshStandardMaterial({color: 0xffff00});
+        const material2 = new THREE.MeshStandardMaterial({color: 0xffffff});
         const cylinder2 = new THREE.Mesh( geometry2, material2 );
         cylinder2.castShadow = true;
         cylinder2.receiveShadow = true;

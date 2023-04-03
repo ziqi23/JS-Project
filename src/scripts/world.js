@@ -23,7 +23,7 @@ class World {
         const plane = new THREE.Mesh( geometry, material );
         plane.rotation.x = Math.PI / 2;
         plane.receiveShadow = true;
-        plane.name = "plane"
+        plane.name = "plane";
         scene.add( plane );
 
         // Initialize mock sky (Currently only in one direction)
@@ -32,6 +32,7 @@ class World {
         const skyPlane = new THREE.Mesh( skyGeometry, skyMaterial );
         skyPlane.rotation.x = -0.1;
         skyPlane.position.z += -500;
+        skyPlane.name = "sky";
         scene.add( skyPlane );
 
         // Create dummy object at (0, 0, 0), set camera location and point to dummy object
