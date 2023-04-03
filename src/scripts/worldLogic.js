@@ -168,19 +168,42 @@ class WorldLogic {
         function update() {
             requestAnimationFrame(update)
 
-            // Move all projectiles
+            // Move all projectiles and delete ones that are too far out
             shotObjects.forEach((ballArray) => {
                 let distance = Math.sqrt(ballArray[1] ** 2 + ballArray[2] ** 2)
-                console.log(distance)
                 ballArray[0].position.x += ballArray[1] / distance;
                 ballArray[0].position.z += ballArray[2] / distance;
+                if (Math.sqrt(ballArray[0].position.x ** 2 + ballArray[0].position.z ** 2) > 200) {
+                    scene.remove(ballArray[0])
+                }
             })
 
-            // Handle collision between projectiles and enemies
-            // scene.children.forEach((object) => {
-            //     if (object.name && object in collision) // Find object
-            //         object.color = object.onHitColor;
-            // })
+            //Handle collision between projectiles and enemies
+            let objectsBoundingBox = {}
+
+            scene.children.forEach((object) => {
+                if (objectsBoundingBox[object.uuid] === undefined) {
+                    // console.log("a")
+                    if (object.geometry) {
+                        objectsBoundingBox[object.uuid] = new THREE.Box3().setFromObject(object);
+                    }
+                }
+            })
+            // console.log(objectsBoundingBox)
+            // Find named objects in the scene
+            // console.log(objectsBoundingBox)
+            shotObjects.forEach((object) => {
+                scene.children.forEach((object2) => {
+                    console.log(objectsBoundingBox[object.uuid])
+                    if (object.uuid !== object2.uuid && objectsBoundingBox[object.uuid] && objectsBoundingBox[object2.uuid]) {
+                        console.log(objectsBoundingBox[object.uuid],objectsBoundingBox[object2.uuid])
+                        if (objectsBoundingBox[object.uuid].intersectsBox(objectsBoundingBox[object2.uuid])) { 
+                            console.log("collision")
+                            object.collided = true;
+                        }
+                    }
+                })
+            })
             
             // Simulate collision by stopping objects when y-coordinate coincides with ground plane
             // NEED TO FIX - hard coded values based on object height, need a way to get dimension data
