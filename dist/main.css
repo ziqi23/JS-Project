@@ -126,7 +126,7 @@ canvas {
 #hp-orb {
   /* filter: hue-rotate(180deg); */
   display: flex;
-  filter: sepia(100%);
+  filter: sepia(100%) hue-rotate(295deg) saturate(200%);
   width: 210px;
   height: 215px;
   align-items: flex-end;
@@ -134,7 +134,24 @@ canvas {
 
 #hp-orb img {
   width: inherit;
-  height: 150px;
+  height: 215px;
+  object-fit: cover;
+  object-position: 50% 100%;
+}
+
+#mp-orb {
+  /* filter: hue-rotate(180deg); */
+  display: flex;
+  filter: sepia(100%) hue-rotate(175deg);
+  /* filter: hue-rotate(90deg); */
+  width: 210px;
+  height: 215px;
+  align-items: flex-end;
+}
+
+#mp-orb img {
+  width: inherit;
+  height: 215px;
   object-fit: cover;
   object-position: 50% 100%;
 }

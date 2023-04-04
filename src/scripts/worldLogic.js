@@ -3,12 +3,13 @@ const Data = require('./data.js')
 const CreateGraph = require('./createGraph.js');
 
 class WorldLogic {
-    constructor(world, worldObjects) {
+    constructor(world, worldObjects, ui) {
         this.scene = world.scene
         this.camera = world.camera
         this.renderer = world.renderer
         this.plane = world.plane
         this.worldObjects = worldObjects
+        this.ui = ui;
     }
 
     run() {
@@ -18,6 +19,7 @@ class WorldLogic {
         let plane = this.plane;
         let camera = this.camera;
         let renderer = this.renderer;
+        let ui = this.ui;
         let objects = {
             cylinder2: undefined, 
             cylinder3: undefined, 
@@ -103,6 +105,7 @@ class WorldLogic {
                 ball.position.y = objects.box6.position.y;
                 ball.name = "ball";
                 scene.add(ball);
+                ui.mana -= 1;
                 shotObjects.push([ball, pointingTo.x, pointingTo.z]);
             } else if (e.buttons === 1 && currentSkill === 2) {
                 const coneGeometry = new THREE.ConeGeometry(2, 50, 10);
@@ -115,6 +118,7 @@ class WorldLogic {
                 cone.name = "thunder";
                 // cone.position.y = objects.box6.position.y;
                 scene.add(cone);
+                ui.mana -= 3;
                 shotObjects.push([cone, pointingTo.x, pointingTo.z]);
             }
         }
@@ -228,12 +232,18 @@ class WorldLogic {
                     objects.box6.collided = true;
                 }
             })
-
+            console.log(ui.health)
             if (objects.box6.collided === true) {
                 objects.box6.collided = false;
-                // movementState.jump = true
+                if (ui.health >= 10) {
+                    ui.health -= 10;
+                } else {
+                    ui.health = 0;
+                }
                 console.log("Hit!")
             }
+
+            ui.buildUi();
             
             // Simulate collision by stopping objects when y-coordinate coincides with ground plane
             // NEED TO FIX - hard coded values based on object height, need a way to get dimension data

@@ -79,7 +79,7 @@ class World {
             }        
             oldXPos = e.screenX;
             oldYPos = e.screenY;
-            console.log(camera.position.x, camera.position.z)
+            // console.log(camera.position.x, camera.position.z)
 
         }
 
