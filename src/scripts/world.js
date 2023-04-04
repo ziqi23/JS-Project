@@ -53,19 +53,30 @@ class World {
         // NEED TO FIX: Don't want to go an absolute distance, but instead circle around the scene
         let oldXPos = 0;
         let oldYPos = 0;
+        let xTracker = 0;
+        let zTracker = 0;
         function handleMouseMove(e) {  
-            if (down === 2 && e.screenY > oldYPos) {
+            let radius = Math.sqrt(camera.position.x ** 2 + camera.position.z ** 2);
+            if (down === 2 && e.screenY > oldYPos && camera.position.y < 15) {
                 // camera should go up
                 camera.position.y += 0.05;
-            } else if (down === 2 && e.screenY < oldYPos) {
+            } else if (down === 2 && e.screenY < oldYPos && camera.position.y > 5) {
                 // camera should go down
                 camera.position.y += -0.05;
             } else if (down === 2 && e.screenX > oldXPos) {
                 // camera should go left
-                camera.position.x += -0.1;
+                xTracker += 0.01;
+                zTracker += 0.01;
+                // console.log(xTracker, zTracker)
+                camera.position.x += Math.cos(xTracker) * radius * -0.01;
+                camera.position.z += Math.sin(zTracker) * radius * -0.01;
             } else if (down === 2 && e.screenX < oldXPos) {
                 // camera should go right
-                camera.position.x += 0.1;
+                xTracker -= 0.01;
+                zTracker -= 0.01;
+                // console.log(xTracker, zTracker)
+                camera.position.x += Math.cos(xTracker) * radius * 0.01;
+                camera.position.z += Math.sin(zTracker) * radius * 0.01;
             }        
             oldXPos = e.screenX;
             oldYPos = e.screenY;

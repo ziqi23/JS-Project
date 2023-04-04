@@ -54,13 +54,13 @@ canvas {
 
 #ui {
   display: flex;
-  position: absolute;
-  width: 12vw;
-  justify-content: space-evenly;
+  position: relative;
+  /* width: 90vw; */
+  justify-content: space-between;
   font-size: 20px;
   font-weight: bold;
-  bottom: 10vh;
-  left: 44vw;
+  bottom: -6vh;
+  /* left: 44vw; */
   z-index: 20;
 }
 
@@ -74,6 +74,51 @@ canvas {
   width: 70px;
   height: 70px;
   border: 3px solid black;
+}
+
+#health {
+  position: absolute;
+  left: 0;
+  top: 80vh;
+  width: 520px;
+  height: 200px;
+}
+
+#mana {
+  position: absolute;
+  right: 0;
+  top: 80vh;
+  display: flex;
+  /* align-items: first baseline; */
+  width: 520px;
+  height: 200px;
+}
+
+#health div, #mana div {
+  position: absolute;
+}
+
+#hp-border {
+  position: absolute;
+  bottom: 6vh;
+}
+
+#mp-border {
+  position: absolute;
+  bottom: 6vh;
+  right: -1vw;
+}
+
+#hp-orb, #hp-shadow, #hp-highlight {
+  position: absolute;
+  bottom: 7vh;
+  left: 0.8vw;
+}
+
+#mp-orb, #mp-shadow, #mp-highlight {
+  position: absolute;
+  bottom: 7vh;
+  right: -0.2vw;
 }
 
 /* body {

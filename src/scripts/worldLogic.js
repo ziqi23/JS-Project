@@ -143,7 +143,7 @@ class WorldLogic {
             })
 
             // Find objects in the scene and handle collision
-            console.log(that.worldObjects.objectsBoundingBox)
+            // console.log(that.worldObjects.objectsBoundingBox)
             shotObjects.forEach((object) => {
                 scene.children.forEach((object2) => {
                     // console.log(that)
