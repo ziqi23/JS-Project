@@ -64,7 +64,7 @@ const eciGraph = document.getElementById("eci-graph");
 
 let w = new World();
 let objects = new WorldObjects(w);
-let logic = new WorldLogic(w);
+let logic = new WorldLogic(w, objects);
 logic.run();
 // document.body.appendChild(renderer.domElement);
 

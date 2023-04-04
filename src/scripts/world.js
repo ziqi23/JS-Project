@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+
 class World {
     constructor() {
         // Initialize scene, camera and light
@@ -18,8 +19,9 @@ class World {
         scene.add(light);
         
         // Initialize 500x500 green playground
+        const rockTexture = new THREE.TextureLoader().load('./assets/rocktexture.jpg');
         const geometry = new THREE.BoxGeometry( 500, 500, 0 );
-        const material = new THREE.MeshStandardMaterial({color: 0x80D65D});
+        const material = new THREE.MeshStandardMaterial({map: rockTexture});
         const plane = new THREE.Mesh( geometry, material );
         plane.rotation.x = Math.PI / 2;
         plane.receiveShadow = true;
@@ -38,8 +40,36 @@ class World {
         // Create dummy object at (0, 0, 0), set camera location and point to dummy object
         const pivot = new THREE.Object3D();
         scene.add(pivot);
-        camera.position.set(0, 10, 30); // Place the camera at x: 0, y: 250, z: 500
-        camera.lookAt(pivot.position); // Point camera towards the pivot
+        camera.position.set(0, 10, 30);
+        camera.lookAt(pivot.position);
+
+        // Set listener to adjust camera angle - Allow mouse dragging x and y directions
+        let down;
+        window.addEventListener('mousedown', (e) => down = e.buttons)
+        window.addEventListener('mouseup', (e) => down = 0)
+        window.addEventListener('mousemove', handleMouseMove)
+        window.addEventListener("contextmenu", (e) => { e.preventDefault() })
+
+        // NEED TO FIX: Don't want to go an absolute distance, but instead circle around the scene
+        let oldXPos = 0;
+        let oldYPos = 0;
+        function handleMouseMove(e) {  
+            if (down === 2 && e.screenY > oldYPos) {
+                // camera should go up
+                camera.position.y += 0.05;
+            } else if (down === 2 && e.screenY < oldYPos) {
+                // camera should go down
+                camera.position.y += -0.05;
+            } else if (down === 2 && e.screenX > oldXPos) {
+                // camera should go left
+                camera.position.x += -0.1;
+            } else if (down === 2 && e.screenX < oldXPos) {
+                // camera should go right
+                camera.position.x += 0.1;
+            }        
+            oldXPos = e.screenX;
+            oldYPos = e.screenY;
+        }
 
         // Render everything above
         const renderer = new THREE.WebGLRenderer();

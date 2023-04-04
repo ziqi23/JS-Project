@@ -1,43 +1,89 @@
 /*!************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/index.css ***!
   \************************************************************************************************************************************/
-canvas {
-  margin: -10px;
+#header {
+  position: absolute;
+  display: flex;
+  width: 95vw;
+  justify-content: space-between;
+  z-index: 20;
 }
 
-body {
-  position: relative;
-}
-
+/* .left {
+    background-color: azure;
+} */
 .right {
-  width: 200px;
+  width: 300px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-#home {
-  font-size: 36px;
-  background-color: azure;
-}
-
 #github {
-  font-size: 24px;
+  width: 200px;
+  height: 50px;
 }
 
 #linkedin {
-  font-size: 24px;
+  width: 100px;
+  height: 50px;
 }
 
-#eci-graph {
-  background-color: rgb(148, 148, 158);
-  position: absolute;
-  top: 600px;
-  z-index: 100;
+#score {
+  font-size: 36px;
+  /* background-color: azure; */
+}
+
+a {
+  width: inherit;
+  height: inherit;
+}
+
+img {
+  width: inherit;
+  height: inherit;
+  object-fit: contain;
 }
 
 canvas {
+  margin: -10px;
   border: 1px solid black;
   position: absolute;
   z-index: 10;
 }
+
+#ui {
+  display: flex;
+  position: absolute;
+  width: 12vw;
+  justify-content: space-evenly;
+  font-size: 20px;
+  font-weight: bold;
+  bottom: 10vh;
+  left: 44vw;
+  z-index: 20;
+}
+
+#skill-one {
+  width: 70px;
+  height: 70px;
+  border: 3px solid gold;
+}
+
+#skill-two {
+  width: 70px;
+  height: 70px;
+  border: 3px solid black;
+}
+
+/* body {
+    position: relative;
+}
+
+#eci-graph {
+    background-color: rgb(148, 148, 158);
+    position: absolute;
+    top: 600px;
+    z-index: 100;
+
+} */
