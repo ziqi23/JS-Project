@@ -65,15 +65,23 @@ canvas {
 }
 
 #skill-one {
-  width: 70px;
-  height: 70px;
-  border: 3px solid gold;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 80.6vh;
+  right: 23.8vw;
+  border: 2px solid gold;
+  z-index: 30;
 }
 
 #skill-two {
-  width: 70px;
-  height: 70px;
-  border: 3px solid black;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 80.6vh;
+  right: 19.8vw;
+  border: 2px solid black;
+  z-index: 30;
 }
 
 #health {
@@ -113,6 +121,22 @@ canvas {
   position: absolute;
   bottom: 7vh;
   left: 0.8vw;
+}
+
+#hp-orb {
+  /* filter: hue-rotate(180deg); */
+  display: flex;
+  filter: sepia(100%);
+  width: 210px;
+  height: 215px;
+  align-items: flex-end;
+}
+
+#hp-orb img {
+  width: inherit;
+  height: 150px;
+  object-fit: cover;
+  object-position: 50% 100%;
 }
 
 #mp-orb, #mp-shadow, #mp-highlight {

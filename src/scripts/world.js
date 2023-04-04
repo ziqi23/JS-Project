@@ -67,7 +67,6 @@ class World {
                 // camera should go left
                 xTracker += 0.01;
                 zTracker += 0.01;
-                // console.log(xTracker, zTracker)
                 camera.position.x += Math.cos(xTracker) * radius * -0.01;
                 camera.position.z += Math.sin(zTracker) * radius * -0.01;
             } else if (down === 2 && e.screenX < oldXPos) {
@@ -80,6 +79,8 @@ class World {
             }        
             oldXPos = e.screenX;
             oldYPos = e.screenY;
+            console.log(camera.position.x, camera.position.z)
+
         }
 
         // Render everything above

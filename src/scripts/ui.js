@@ -7,7 +7,7 @@ class Ui {
         this.potions = 3;
     }
 
-    constructSkillBar() {
+    buildUi() {
         
     }
 }
