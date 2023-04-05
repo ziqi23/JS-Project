@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 const Data = require('./data.js')
 const CreateGraph = require('./createGraph.js');
+import * as MTLLoader from 'three/addons/loaders/MTLLoader.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+
 
 class WorldLogic {
     constructor(world, worldObjects, ui, model) {
@@ -29,7 +32,7 @@ class WorldLogic {
             cylinder5: undefined, 
             box6: undefined, 
         }
-        console.log(model)
+        // console.log(model)
         scene.children.forEach((child) => {
             if (Object.keys(objects).includes(child.name)) {
                 objects[child.name] = child
@@ -57,24 +60,47 @@ class WorldLogic {
         let round = 1;
         let enemies = [];
         let score = 0;
-        function gameStart() {
+        async function gameStart() {
+            // const globeTexture = new THREE.TextureLoader().load('./assets/globetexture.png');
             for (let i = 0; i < 5 * round; i++) {
-                const enemyGeometry = new THREE.CapsuleGeometry(1, 3, 10, 20);
-                const enemyMaterial = new THREE.MeshStandardMaterial({color: 0x99004c});
-                const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
-                enemy.castShadow = true;
-                enemy.receiveShadow = true;
-                enemy.position.x = (Math.random() - 0.5) * 70;
-                enemy.position.z = Math.random() * -100 - 50;
-                enemy.position.y = 1.5;
-                enemy.clock = new THREE.Clock();
-                scene.add(enemy);
-                enemies.push(enemy);
+                const loader = new OBJLoader();
+                await loader.load("./assets/ufoobj.obj", function(obj) {
+                    // console.log(obj)
+                    // obj[0].material = new THREE.MeshStandardMaterial({map: globeTexture});
+                    // obj[1].material = new THREE.MeshStandardMaterial({map: globeTexture});
+                    obj.scale.x = 0.08;
+                    obj.scale.y = 0.08;
+                    obj.scale.z = 0.08;
+                    obj.position.x = (Math.random() - 0.5) * 70;
+                    obj.position.z = Math.random() * -100 - 25;
+                    obj.clock = new THREE.Clock();
+                    scene.add(obj);
+                    enemies.push(obj);
+                },
+
+                function(xhr) {
+                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                
+                function(error) {
+                    console.log('An error happened');
+                })
+            
+                // const enemyGeometry = new THREE.CapsuleGeometry(1, 3, 10, 20);
+                // const enemyMaterial = new THREE.MeshStandardMaterial({color: 0x99004c});
+                // const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
+                // enemy.castShadow = true;
+                // enemy.receiveShadow = true;
+                // enemy.position.x = (Math.random() - 0.5) * 70;
+                // enemy.position.z = Math.random() * -100 - 50;
+                // enemy.position.y = 1.5;
+                // enemy.clock = new THREE.Clock();
+                // scene.add(enemy);
+                // enemies.push(enemy);
             }
             round += 1;
         }
         
-
 
         // Construct arrow/beam
         const raycaster = new THREE.Raycaster();
@@ -89,8 +115,10 @@ class WorldLogic {
             mousePos.y = - ((e.clientY / canvasHeight) * 2 - 1);
             raycaster.setFromCamera(mousePos, camera)
             const intersects = raycaster.intersectObjects(scene.children)
-            pointingTo.x = intersects[0].point.x
-            pointingTo.z = intersects[0].point.z
+            if (intersects[0]) {
+                pointingTo.x = intersects[0].point.x
+                pointingTo.z = intersects[0].point.z
+            }
             // console.log(pointingTo)
         }
 
@@ -139,7 +167,11 @@ class WorldLogic {
 
         function update() {
             requestAnimationFrame(update)
-            
+
+            worldObjects.move();
+            // console.log(enemies)
+            // console.log(worldObjects.objectsBoundingBox)
+
             // Move all projectiles and delete ones that are too far out
             shotObjects.forEach((ballArray) => {
                 if (ballArray[0].name === "ball") {
@@ -207,7 +239,7 @@ class WorldLogic {
                 } else {
                     if (enemy.clock.getElapsedTime() > 1) {
                         enemy.clock.start();
-                        const beamGeometry = new THREE.CylinderGeometry(0.1, 0.1, 3, 20);
+                        const beamGeometry = new THREE.SphereGeometry(1, 32, 32);
                         const beamMaterial = new THREE.MeshToonMaterial({color: 0xDC2267});
                         const beam = new THREE.Mesh(beamGeometry, beamMaterial);
 
@@ -217,7 +249,7 @@ class WorldLogic {
                         beam.rotation.x = (Math.random() * 2 - 1)
 
                         beam.position.x = enemy.position.x;
-                        beam.position.y = enemy.position.y - 1;
+                        beam.position.y = enemy.position.y + 1;
                         beam.position.z = enemy.position.z;
                         beam.name = "enemyAttack";
                         enemyAttacks.push(beam);
@@ -292,7 +324,7 @@ class WorldLogic {
                 objects.box6.position.y += -0.05;
             }
             
-            worldObjects.move();
+
         
             camera.lookAt(objects.box6.position);
             renderer.render(scene, camera)

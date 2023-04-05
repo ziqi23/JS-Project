@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 class WorldObjects {
     constructor(world) {
@@ -129,25 +128,7 @@ class WorldObjects {
         world.renderer.render(world.scene, world.camera);
     }
     
-    // async loadModel() {
-    //     const loader = new GLTFLoader();
-    //     const res = await loader.load('./assets/modelgltf.gltf', function(gltf) {
-    //         gltf.scene.scale.x = 0.02;
-    //         gltf.scene.scale.y = 0.02;
-    //         gltf.scene.scale.z = 0.02;
-    //         this.scene.add(gltf.scene);
-    //         console.log(gltf.scene)
-    //     },
 
-    //     function(xhr) {
-    //         console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-    //     },
-        
-    //     function(error) {
-    //         console.log('An error happened');
-    //     })
-    //     return res;
-    // }
 
     move() {
         //Handle collision between projectiles and enemies - Map each object to its bounding box
@@ -155,7 +136,7 @@ class WorldObjects {
         this.scene.children.forEach((object) => {
             if (this.objectsBoundingBox[object.uuid] === undefined) {
                 // console.log("a")
-                if (object.geometry) {
+                if (object.geometry || object.clock) {
                     this.objectsBoundingBox[object.uuid] = new THREE.Box3().setFromObject(object);
                 }
             }
@@ -221,3 +202,22 @@ class WorldObjects {
 
 export default WorldObjects;
 
+        // async loadModel() {
+        //     const loader = new GLTFLoader();
+        //     const res = await loader.load('./assets/modelgltf.gltf', function(gltf) {
+        //         gltf.scene.scale.x = 0.02;
+        //         gltf.scene.scale.y = 0.02;
+        //         gltf.scene.scale.z = 0.02;
+        //         this.scene.add(gltf.scene);
+        //         console.log(gltf.scene)
+        //     },
+
+        //     function(xhr) {
+        //         console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        //     },
+            
+        //     function(error) {
+        //         console.log('An error happened');
+        //     })
+        //     return res;
+        // }

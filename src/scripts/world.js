@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 class World {
     constructor() {
@@ -34,13 +35,97 @@ class World {
         plane.name = "plane";
         scene.add( plane );
 
+        // Initialize base
+            const gltfLoader = new GLTFLoader();
+            gltfLoader.load('./assets/ISS_stationary.glb', function(gltf) {
+                // gltf.scene.scale.x = 1;
+                // gltf.scene.scale.y = 0.02;
+                // gltf.scene.scale.z = 0.02;
+                gltf.scene.position.x = 30;
+                gltf.scene.position.y = 10;
+                gltf.scene.position.z = 40;
+                gltf.scene.rotation.z = Math.PI;
+                gltf.scene.rotation.y = Math.PI / 4;
+                scene.add(gltf.scene);
+                console.log(gltf.scene)
+            })
+
+        // Initialize background
+            const globeTexture = new THREE.TextureLoader().load('./assets/globetexture.png');
+            const bgGeometry = new THREE.SphereGeometry( 200, 64, 64 );
+            const bgMaterial = new THREE.MeshStandardMaterial({map: globeTexture});
+            const bg = new THREE.Mesh( bgGeometry, bgMaterial );
+            bg.position.x = 200;
+            bg.position.z = -450;
+            bg.name = "sky"
+            scene.add( bg );
+
+        // Initialize terrain
+        const loader = new OBJLoader();
+        loader.load("./assets/LargeCaveRock_Obj.obj", function(obj) {
+            obj.position.y = 40;
+            obj.position.x = 200;
+            obj.rotation.y = Math.PI / 2
+            obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
+            obj.name = "sky"
+            // obj.clock = new THREE.Clock();
+            scene.add(obj);
+        })
+
+        loader.load("./assets/LargeCaveRock_Obj.obj", function(obj) {
+            obj.position.y = 40;
+            obj.position.z = 200;
+            obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
+            obj.name = "sky"
+            // obj.rotation.y = -Math.PI / 2
+            // obj.clock = new THREE.Clock();
+            console.log(obj)
+            scene.add(obj);
+        })
+
+        loader.load("./assets/LargeCaveRock_Obj.obj", function(obj) {
+            obj.position.y = 40;
+            obj.position.x = -200;
+            obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
+            obj.rotation.y = Math.PI / 2
+            obj.name = "sky"
+            // obj.clock = new THREE.Clock();
+            scene.add(obj);
+        })
+
+        // let mtlLoader = new THREE.MTLLoader();
+        // mtlLoader.load("./assets/rock1.mtl", materials => {
+        //     materials.preload();
+        for(let i = 0; i < 20; i++) {
+            // loader.setMaterials(materials);
+            loader.load("./assets/rock1.obj", function(obj) {
+                for (let i = 0; i < 3; i++) {
+                    let randomRock = obj.children[i]
+                    randomRock.material = new THREE.MeshStandardMaterial({map: rockTexture});
+                    randomRock.scale.x = 2;
+                    randomRock.scale.y = 2;
+                    randomRock.scale.z = 2;
+                    randomRock.position.y = -5;
+                    if (Math.random() > 0.5) {
+                        randomRock.position.x = (100 + Math.random() * 50)
+                    } else {
+                        randomRock.position.x = -(100 + Math.random() * 50)
+                    }
+                    randomRock.position.z = (Math.random() * 2 - 1) * 300 - 100;
+                    obj.name = "sky"
+                    scene.add(randomRock);
+                }
+            })
+        }
+        // })
+
         // Initialize mock sky (Currently only in one direction)
-        const skyGeometry = new THREE.BoxGeometry( 2000, 2000, 0.1 );
-        const skyMaterial = new THREE.MeshStandardMaterial({color: 0xA9D8EB});
-        const skyPlane = new THREE.Mesh( skyGeometry, skyMaterial );
-        skyPlane.position.z += -500;
-        skyPlane.name = "sky";
-        scene.add( skyPlane );
+        // const skyGeometry = new THREE.BoxGeometry( 2000, 2000, 0.1 );
+        // const skyMaterial = new THREE.MeshStandardMaterial({color: 0xA9D8EB});
+        // const skyPlane = new THREE.Mesh( skyGeometry, skyMaterial );
+        // skyPlane.position.z += -500;
+        // skyPlane.name = "sky";
+        // scene.add( skyPlane );
 
         // const skyGeometry = new THREE.SphereGeometry(500, 32, 32, 0, Math.PI)
         // const skyMaterial = new THREE.MeshStandardMaterial({color: 0xA9D8EB});
