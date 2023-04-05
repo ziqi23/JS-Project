@@ -15,8 +15,9 @@ class WorldLogic {
         this.ui = ui;
         this.model = model
     }
-
+    
     run() {
+        
         // Fetch objects to be handled by logic below.
         let worldObjects = this.worldObjects;
         let scene = this.scene;
@@ -65,9 +66,9 @@ class WorldLogic {
             for (let i = 0; i < 5 * round; i++) {
                 const loader = new OBJLoader();
                 await loader.load("./assets/ufoobj.obj", function(obj) {
-                    // console.log(obj)
-                    // obj[0].material = new THREE.MeshStandardMaterial({map: globeTexture});
-                    // obj[1].material = new THREE.MeshStandardMaterial({map: globeTexture});
+                    console.log(obj)
+                    obj.children[0].material = new THREE.MeshStandardMaterial({color: 0xD39FE6});
+                    obj.children[1].material = new THREE.MeshStandardMaterial({color: 0xD39FE6});
                     obj.scale.x = 0.08;
                     obj.scale.y = 0.08;
                     obj.scale.z = 0.08;
@@ -137,6 +138,8 @@ class WorldLogic {
                 ball.position.z = objects.box6.position.z;
                 ball.position.y = objects.box6.position.y;
                 ball.name = "ball";
+                let audio = new Audio("./assets/laser-gun-shot.wav")
+                audio.play();
                 scene.add(ball);
                 ui.mana -= 1;
                 // console.log("here", pointingTo.x, pointingTo.z)
@@ -150,6 +153,8 @@ class WorldLogic {
                 cone.position.y = 50;
                 cone.position.z = pointingTo.z;
                 cone.name = "thunder";
+                let audio = new Audio("./assets/shock-spell.mp3")
+                audio.play();
                 // cone.position.y = objects.box6.position.y;
                 scene.add(cone);
                 ui.mana -= 3;
@@ -189,8 +194,10 @@ class WorldLogic {
             // Find objects in the scene and handle collision
             shotObjects.forEach((object) => {
                 scene.children.forEach((object2) => {
-                    if (object[0].uuid !== object2.uuid && that.worldObjects.objectsBoundingBox[object2.uuid] && object2.name !== "plane" && object2.name !== "sky" && object2.name !== "box6" ) {
+                    if (object[0].uuid !== object2.uuid && that.worldObjects.objectsBoundingBox[object2.uuid] && object2.name !== "plane" && object2.name !== "sky" && object2.name !== "box6" && object2.name !== "enemyAttack") {
                         if (that.worldObjects.objectsBoundingBox[object[0].uuid] && that.worldObjects.objectsBoundingBox[object[0].uuid].intersectsBox(that.worldObjects.objectsBoundingBox[object2.uuid])) { 
+                            let audio = new Audio("./assets/enemy-hit.mp3")
+                            audio.play();
                             console.log("collision between:", object, object2)
                             object2.collided = true;
                             scene.remove(object[0]);
@@ -214,6 +221,8 @@ class WorldLogic {
             }
 
             if (objects.cylinder2.collided === true && objects.cylinder3.collided === true && objects.cylinder4.collided === true && objects.cylinder5.collided === true) {
+                let audio = new Audio("./assets/alien-hum.wav")
+                audio.play();
                 gameStart();
                 scene.remove(objects.cylinder2)
                 scene.remove(objects.cylinder3)
@@ -283,6 +292,8 @@ class WorldLogic {
 
             if (objects.box6.collided === true && playerHitClock.getElapsedTime() > 1) {
                 if (!popUp) {
+                    let audio = new Audio("./assets/player-hit.mp3")
+                    audio.play();
                     popUp = document.createElement("h1");
                     popUp.innerHTML = `-10`
                     popUp.style.position = 'absolute';

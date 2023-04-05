@@ -10,11 +10,15 @@ class Ui {
         document.addEventListener("keydown", (e) => {
             if (e.code === "KeyQ") {
                 if (this.potions >= 1) {
+                    let audio = new Audio("./assets/drink-potion.mp3")
+                    audio.play();
                     this.potions -= 1;
                     this.health = 100;
                 }
             } else if (e.code === "KeyE") {
                 if (this.manaPotions >= 1) {
+                    let audio = new Audio("./assets/drink-potion.mp3")
+                    audio.play();
                     this.manaPotions -= 1;
                     this.mana = 100;
                 }

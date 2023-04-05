@@ -64,7 +64,8 @@ const eciGraph = document.getElementById("eci-graph");
 // }
 async function start() {
     let w = new World();
-    let objects = new WorldObjects(w);
+    let objects = await new WorldObjects(w);
+    await objects.constructRocks.apply(objects);
     let ui = new Ui()
     // const model = await objects.loadModel();
     // console.log(model)

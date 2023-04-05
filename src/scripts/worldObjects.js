@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
 class WorldObjects {
     constructor(world) {
@@ -28,6 +29,7 @@ class WorldObjects {
         cylinder3.position.y = 5;
         cylinder3.name = "cylinder3"
         world.scene.add( cylinder3 );
+        
         
         // Construct Cylinder 3
         const geometry4 = new THREE.CylinderGeometry( 1, 1, 3, 20);
@@ -128,7 +130,64 @@ class WorldObjects {
         world.renderer.render(world.scene, world.camera);
     }
     
+    async constructRocks() {
+        let that = this;
+        // Construct Cylinder 1
+        const loader = new OBJLoader();
+        const rockTexture = new THREE.TextureLoader().load('./assets/rocktexture.jpg');
+        await loader.load("./assets/startRock.obj", function(obj) {
+            console.log(obj)
+            obj.scale.x = 0.13
+            obj.scale.y = 0.13
+            obj.scale.z = 0.13
+            obj.position.x = -8
+            obj.position.z = -8
+            obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
+            obj.name = "cylinder2"
+            that.scene.add(obj);
+        })
 
+        // Construct Cylinder 2
+        await loader.load("./assets/startRock.obj", function(obj) {
+            console.log(obj)
+            obj.scale.x = 0.13
+            obj.scale.y = 0.13
+            obj.scale.z = 0.13
+            obj.position.x = -8
+            obj.position.z = 8
+            obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
+            obj.name = "cylinder3"
+            that.scene.add(obj);
+        })
+        
+        // Construct Cylinder 3
+        await loader.load("./assets/startRock.obj", function(obj) {
+            console.log(obj)
+            obj.scale.x = 0.13
+            obj.scale.y = 0.13
+            obj.scale.z = 0.13
+            obj.position.x = 8
+            obj.position.z = 8
+            // obj.rotation.y = Math.PI / 2
+            obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
+            obj.name = "cylinder4"
+            // obj.clock = new THREE.Clock();
+            that.scene.add(obj);
+        })
+        
+        // Construct Cylinder 4
+        await loader.load("./assets/startRock.obj", function(obj) {
+            console.log(obj)
+            obj.scale.x = 0.13
+            obj.scale.y = 0.13
+            obj.scale.z = 0.13
+            obj.position.x = 8
+            obj.position.z = -8
+            obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
+            obj.name = "cylinder5"
+            that.scene.add(obj);
+        })
+    }
 
     move() {
         //Handle collision between projectiles and enemies - Map each object to its bounding box
