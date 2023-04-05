@@ -160,11 +160,33 @@ canvas {
     right: -0.2vw;
 }
 
-/* body {
-    position: relative;
+body {
+    overflow: hidden;
 }
 
-#eci-graph {
+#red {
+    position: absolute;
+    top: 81.5vh;
+    left: 18vw;
+    width: 100px;
+    height: 100px;
+    z-index: 40;
+    opacity: 80%;
+    filter: saturate(200%);
+}
+
+#blue {
+    position: absolute;
+    top: 81.5vh;
+    left: 28vw;
+    width: 100px;
+    height: 100px;
+    z-index: 40;
+    opacity: 80%;
+    filter: saturate(200%);
+}
+
+/* #eci-graph {
     background-color: rgb(148, 148, 158);
     position: absolute;
     top: 600px;

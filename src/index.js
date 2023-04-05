@@ -62,12 +62,17 @@ const eciGraph = document.getElementById("eci-graph");
 //     document.getElementById("eci-holder").appendChild(newContainer);
 //     createEciGraph(2015, 2022);
 // }
+async function start() {
+    let w = new World();
+    let objects = new WorldObjects(w);
+    let ui = new Ui()
+    // const model = await objects.loadModel();
+    // console.log(model)
+    let logic = new WorldLogic(w, objects, ui);
+    logic.run();
+}
 
-let w = new World();
-let objects = new WorldObjects(w);
-let ui = new Ui()
-let logic = new WorldLogic(w, objects, ui);
-logic.run();
+start();
 // document.body.appendChild(renderer.domElement);
 
 // const scene = new THREE.Scene();

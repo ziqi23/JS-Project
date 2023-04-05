@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 class WorldObjects {
     constructor(world) {
@@ -56,33 +56,21 @@ class WorldObjects {
         world.scene.add( cylinder5 );
 
         // Construct center movable object 
-        // let box6;       
-        // const loader = new FBXLoader();
-        // loader.load('./assets/modelfbx.fbx', 
+        // let box;       
 
-        // function(object) {
-        //     console.log(object)
-        //     object.scale.x = 0.02;
-        //     object.scale.y = 0.02;
-        //     object.scale.z = 0.02;
-        //     object.children.forEach((child) => {
-        //         child.rotation.z = Math.PI;
-        //         // child.material = new MeshStandardMaterial();
-        //     })
-        //     world.scene.add(object);
-        //     box6 = object;
-        //     object.name = "box6"
-        // },
-
-        // function(xhr) {
-        //     console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        // },
-        
-        // function(error) {
-        //     console.log('An error happened');
+        // console.log(world.scene)
+        // console.log(world.scene.children[8])
+        // world.scene.children[.forEach((child) => {
+        //     console.log(child);]
+            // if (child.children && name === "box6") {
+            //     console.log(true);
+            // }
         // })
+        // console.log(world.scene)
 
-        // this.box6 = box6;
+        // this.box = box6;
+        // console.log(this.box)
+        // console.log(box6)
 
         const geometry6 = new THREE.BoxGeometry( 1, 1, 1 )
         const material6 = new THREE.MeshStandardMaterial({color: 0xEE6637});
@@ -141,6 +129,26 @@ class WorldObjects {
         world.renderer.render(world.scene, world.camera);
     }
     
+    // async loadModel() {
+    //     const loader = new GLTFLoader();
+    //     const res = await loader.load('./assets/modelgltf.gltf', function(gltf) {
+    //         gltf.scene.scale.x = 0.02;
+    //         gltf.scene.scale.y = 0.02;
+    //         gltf.scene.scale.z = 0.02;
+    //         this.scene.add(gltf.scene);
+    //         console.log(gltf.scene)
+    //     },
+
+    //     function(xhr) {
+    //         console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    //     },
+        
+    //     function(error) {
+    //         console.log('An error happened');
+    //     })
+    //     return res;
+    // }
+
     move() {
         //Handle collision between projectiles and enemies - Map each object to its bounding box
         this.objectsBoundingBox = {}
@@ -204,6 +212,8 @@ class WorldObjects {
 
         if (this.movementState.jump && Math.floor(this.box6.position.y) === 0) {
             this.box6.position.y += 3
+            this.movementState.jump = false;
+        } else {
             this.movementState.jump = false;
         }
     }

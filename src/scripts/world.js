@@ -8,7 +8,7 @@ class World {
         const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 1, 1000)
         const light = new THREE.DirectionalLight()
         light.position.x = 0;
-        light.position.z = 50;
+        light.position.z = -100;
         light.position.y = 50;
         // NEED TO FIX - Shadows
         light.castShadow = true;
@@ -17,6 +17,12 @@ class World {
         light.shadow.camera.left = 100;
         light.shadow.camera.right = -100;
         scene.add(light);
+
+        const light2 = new THREE.DirectionalLight()
+        light2.position.x = 0;
+        light2.position.z = 100;
+        light2.position.y = 50;
+        scene.add(light2);
         
         // Initialize 500x500 green playground
         const rockTexture = new THREE.TextureLoader().load('./assets/rocktexture.jpg');
@@ -32,10 +38,42 @@ class World {
         const skyGeometry = new THREE.BoxGeometry( 2000, 2000, 0.1 );
         const skyMaterial = new THREE.MeshStandardMaterial({color: 0xA9D8EB});
         const skyPlane = new THREE.Mesh( skyGeometry, skyMaterial );
-        skyPlane.rotation.x = -0.1;
         skyPlane.position.z += -500;
         skyPlane.name = "sky";
         scene.add( skyPlane );
+
+        // const skyGeometry = new THREE.SphereGeometry(500, 32, 32, 0, Math.PI)
+        // const skyMaterial = new THREE.MeshStandardMaterial({color: 0xA9D8EB});
+        // const skyPlane = new THREE.Mesh( skyGeometry, skyMaterial );
+        // // skyPlane.position.z += -500;
+        // skyPlane.name = "sky";
+        // scene.add( skyPlane );
+
+        // const skyGeometry2 = new THREE.BoxGeometry( 2000, 2000, 0.1 );
+        // const skyMaterial2 = new THREE.MeshStandardMaterial({color: 0xA9D8EB});
+        // const skyPlane2 = new THREE.Mesh( skyGeometry2, skyMaterial2 );
+        // skyPlane2.position.z += 500;
+        // skyPlane2.rotation.z = Math.PI
+        // skyPlane2.name = "sky";
+        // scene.add( skyPlane2 );
+
+        // const skyGeometry3 = new THREE.BoxGeometry( 2000, 2000, 0.1 );
+        // const skyMaterial3 = new THREE.MeshStandardMaterial({color: 0xA9D8EB});
+        // const skyPlane3 = new THREE.Mesh( skyGeometry3, skyMaterial3 );
+        // skyPlane3.position.x += 500;
+        // skyPlane3.rotation.y = 1;
+        // skyPlane3.rotation.z = Math.PI / 2;
+        // skyPlane3.name = "sky";
+        // scene.add( skyPlane3 );
+
+        // const skyGeometry4 = new THREE.BoxGeometry( 2000, 2000, 0.1 );
+        // const skyMaterial4 = new THREE.MeshStandardMaterial({color: 0xA9D8EB});
+        // const skyPlane4 = new THREE.Mesh( skyGeometry4, skyMaterial4 );
+        // skyPlane4.position.x += -500;
+        // skyPlane4.rotation.y = 1;
+        // skyPlane4.rotation.z = Math.PI / 2;
+        // skyPlane4.name = "sky";
+        // scene.add( skyPlane4 );
 
         // Create dummy object at (0, 0, 0), set camera location and point to dummy object
         const pivot = new THREE.Object3D();

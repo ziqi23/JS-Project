@@ -3,13 +3,14 @@ const Data = require('./data.js')
 const CreateGraph = require('./createGraph.js');
 
 class WorldLogic {
-    constructor(world, worldObjects, ui) {
+    constructor(world, worldObjects, ui, model) {
         this.scene = world.scene
         this.camera = world.camera
         this.renderer = world.renderer
         this.plane = world.plane
         this.worldObjects = worldObjects
         this.ui = ui;
+        this.model = model
     }
 
     run() {
@@ -19,6 +20,7 @@ class WorldLogic {
         let plane = this.plane;
         let camera = this.camera;
         let renderer = this.renderer;
+        let model = this.model;
         let ui = this.ui;
         let objects = {
             cylinder2: undefined, 
@@ -27,11 +29,15 @@ class WorldLogic {
             cylinder5: undefined, 
             box6: undefined, 
         }
+        console.log(model)
         scene.children.forEach((child) => {
             if (Object.keys(objects).includes(child.name)) {
                 objects[child.name] = child
             }
-        })        
+        })       
+        // console.log(worldObjects)
+        // objects["box6"] = worldObjects.box;
+        // console.log(objects)
         
         // Skill selection
         window.addEventListener("keydown", handleSkillToggle) 
@@ -83,7 +89,6 @@ class WorldLogic {
             mousePos.y = - ((e.clientY / canvasHeight) * 2 - 1);
             raycaster.setFromCamera(mousePos, camera)
             const intersects = raycaster.intersectObjects(scene.children)
-            // console.log(intersects)
             pointingTo.x = intersects[0].point.x
             pointingTo.z = intersects[0].point.z
             // console.log(pointingTo)
@@ -94,7 +99,7 @@ class WorldLogic {
         let shotObjects = [];
         function handleShoot(e) {
             // console.log(e)
-            if (e.buttons === 1 && currentSkill === 1) {
+            if (e.buttons === 1 && currentSkill === 1 && ui.mana >= 1) {
                 const ballGeometry = new THREE.SphereGeometry(0.2, 64, 64);
                 const ballMaterial = new THREE.MeshToonMaterial({color: 0xD4DFEC});
                 const ball = new THREE.Mesh(ballGeometry, ballMaterial);
@@ -106,8 +111,9 @@ class WorldLogic {
                 ball.name = "ball";
                 scene.add(ball);
                 ui.mana -= 1;
+                // console.log("here", pointingTo.x, pointingTo.z)
                 shotObjects.push([ball, pointingTo.x, pointingTo.z]);
-            } else if (e.buttons === 1 && currentSkill === 2) {
+            } else if (e.buttons === 1 && currentSkill === 2 && ui.mana >= 3) {
                 const coneGeometry = new THREE.ConeGeometry(2, 50, 10);
                 const coneMaterial = new THREE.MeshToonMaterial({color: 0xD4DFEC});
                 const cone = new THREE.Mesh(coneGeometry, coneMaterial);
@@ -125,19 +131,21 @@ class WorldLogic {
 
         // Keep track of incoming attacks
         let enemyAttacks = [];
-
+        let playerHitClock = new THREE.Clock();
         // Main loop to update each frame
         let that = this;
+        let popUp;
+        let popUpClock = new THREE.Clock();
+
         function update() {
             requestAnimationFrame(update)
-
-
+            
             // Move all projectiles and delete ones that are too far out
             shotObjects.forEach((ballArray) => {
                 if (ballArray[0].name === "ball") {
-                    let distance = Math.sqrt(ballArray[1] ** 2 + ballArray[2] ** 2)
-                    ballArray[0].position.x += ballArray[1] / distance;
-                    ballArray[0].position.z += ballArray[2] / distance;
+                    let distance = Math.sqrt((objects.box6.position.x - ballArray[1]) ** 2 + (objects.box6.position.z - ballArray[2]) ** 2)
+                    ballArray[0].position.x += -(objects.box6.position.x - ballArray[1]) / distance;
+                    ballArray[0].position.z += -(objects.box6.position.z - ballArray[2]) / distance;
                     if (Math.sqrt(ballArray[0].position.x ** 2 + ballArray[0].position.z ** 2) > 200) {
                         scene.remove(ballArray[0])
                     }
@@ -147,10 +155,8 @@ class WorldLogic {
             })
 
             // Find objects in the scene and handle collision
-            // console.log(that.worldObjects.objectsBoundingBox)
             shotObjects.forEach((object) => {
                 scene.children.forEach((object2) => {
-                    // console.log(that)
                     if (object[0].uuid !== object2.uuid && that.worldObjects.objectsBoundingBox[object2.uuid] && object2.name !== "plane" && object2.name !== "sky" && object2.name !== "box6" ) {
                         if (that.worldObjects.objectsBoundingBox[object[0].uuid] && that.worldObjects.objectsBoundingBox[object[0].uuid].intersectsBox(that.worldObjects.objectsBoundingBox[object2.uuid])) { 
                             console.log("collision between:", object, object2)
@@ -199,13 +205,17 @@ class WorldLogic {
                     document.getElementById("score").innerHTML = `Score: ${score}`
                     enemies.splice(enemies.indexOf(enemy), 1)
                 } else {
-                    if (enemy.clock.getElapsedTime() > 5) {
+                    if (enemy.clock.getElapsedTime() > 1) {
                         enemy.clock.start();
                         const beamGeometry = new THREE.CylinderGeometry(0.1, 0.1, 3, 20);
                         const beamMaterial = new THREE.MeshToonMaterial({color: 0xDC2267});
                         const beam = new THREE.Mesh(beamGeometry, beamMaterial);
-                        beam.rotation.z = Math.PI / 2;
+
+                        // let d = Math.sqrt((objects.box6.position.x - beam.position.x) ** 2 + (objects.box6.position.z - beam.position.z) ** 2)
+                        beam.rotation.z = -Math.PI / 2;
                         beam.rotation.y = Math.PI / 2;
+                        beam.rotation.x = (Math.random() * 2 - 1)
+
                         beam.position.x = enemy.position.x;
                         beam.position.y = enemy.position.y - 1;
                         beam.position.z = enemy.position.z;
@@ -226,22 +236,45 @@ class WorldLogic {
 
             // Move each enemy attack closer to center and handle collision
             enemyAttacks.forEach((beam) => {
-                beam.position.z += 0.5;
+
+                // let xDiff = beam.position.x - objects.box6.position.x;
+                // let zDiff = beam.position.z - objects.box6.position.z;
+                beam.position.x -= beam.rotation.x * 0.5;
+                beam.position.z -= beam.rotation.z;
                 // console.log(this.worldObjects.objectsBoundingBox[beam.uuid])
                 if (that.worldObjects.objectsBoundingBox[beam.uuid] && that.worldObjects.objectsBoundingBox[beam.uuid].intersectsBox(that.worldObjects.objectsBoundingBox[objects.box6.uuid])) {
                     objects.box6.collided = true;
                 }
             })
-            console.log(ui.health)
-            if (objects.box6.collided === true) {
-                objects.box6.collided = false;
-                if (ui.health >= 10) {
-                    ui.health -= 10;
-                } else {
-                    ui.health = 0;
+            // console.log(ui.health)
+            // console.log(playerHitClock.getElapsedTime())
+
+            if (objects.box6.collided === true && playerHitClock.getElapsedTime() > 1) {
+                if (!popUp) {
+                    popUp = document.createElement("h1");
+                    popUp.innerHTML = `-10`
+                    popUp.style.position = 'absolute';
+                    popUp.style.top = '30vh'
+                    popUp.style.right = '50vw';
+                    popUp.style.color = 'Red';
+                    popUp.setAttribute("id", "pop-up")
+                    document.getElementById("ui").appendChild(popUp);
+                    popUpClock.start();
+                    playerHitClock.start();
+                    if (ui.health >= 10) {
+                        ui.health -= 10;
+                    } else {
+                        ui.health = 0;
+                    }
                 }
-                console.log("Hit!")
             }
+            if (popUpClock.getElapsedTime() > 0.5 && popUp) {
+                let el = document.getElementById("pop-up");
+                el.remove();
+                popUp = undefined;
+            }
+
+            objects.box6.collided = false;
 
             ui.buildUi();
             
@@ -261,28 +294,59 @@ class WorldLogic {
             
             worldObjects.move();
         
-            // Callback to show graph if "enter" key pressed near pillars
-            if (objects.box6.position.x > 7 && objects.box6.position.x < 9 && objects.box6.position.z > 7 && objects.box6.position.z < 9) {
-                window.addEventListener('keydown', handleShowGraph)
-            }
-            if (objects.box6.position.x < -7 && objects.box6.position.x > -9 && objects.box6.position.z > 7 && objects.box6.position.z < 9) {
-                window.addEventListener('keydown', handleShowGraph)
-            }
-            if (objects.box6.position.x > 7 && objects.box6.position.x < 9 && objects.box6.position.z < -7 && objects.box6.position.z > -9) {
-                window.addEventListener('keydown', handleShowGraph)
-            }
-            if (objects.box6.position.x < -7 && objects.box6.position.x > -9 && objects.box6.position.z < -7 && objects.box6.position.z > -9) {
-                window.addEventListener('keydown', handleShowGraph)
-            }
             camera.lookAt(objects.box6.position);
             renderer.render(scene, camera)
+            
+            if (ui.health <= 0) {
+                shotObjects.forEach(object => scene.remove(object))
+                enemies.forEach(enemy => scene.remove(enemy))
+                enemies = [];
+                enemyAttacks.forEach(attack => scene.remove(attack))
+                objects.box6.position.x = 0;
+                objects.box6.position.y = 1.5;
+                objects.box6.position.z = 0;
+                ui.health = 100;
+                ui.mana = 100;
+                ui.potions = 3;
+                ui.manaPotions = 3;
+                scene.add(objects.cylinder2)
+                scene.add(objects.cylinder3)
+                scene.add(objects.cylinder4)
+                scene.add(objects.cylinder5)
+                camera.position.set(0, 10, 30);
+                let gameOverPopUp = document.createElement("div")
+                gameOverPopUp.innerHTML = "GAME OVER"
+                gameOverPopUp.style.fontSize = "72px"
+                gameOverPopUp.style.color = "red"
+                gameOverPopUp.style.backgroundColor = "gray"
+                gameOverPopUp.style.position = "absolute"
+                gameOverPopUp.style.top = '25vh'
+                gameOverPopUp.style.left = '25vw';
+                gameOverPopUp.style.width = '800px'
+                gameOverPopUp.style.height = '400px';
+                document.getElementById("ui").appendChild(gameOverPopUp);
+            }
         }
         update();
     }
+
 }
 
 export default WorldLogic;
 
+        // // Callback to show graph if "enter" key pressed near pillars
+        // if (objects.box6.position.x > 7 && objects.box6.position.x < 9 && objects.box6.position.z > 7 && objects.box6.position.z < 9) {
+        //     window.addEventListener('keydown', handleShowGraph)
+        // }
+        // if (objects.box6.position.x < -7 && objects.box6.position.x > -9 && objects.box6.position.z > 7 && objects.box6.position.z < 9) {
+        //     window.addEventListener('keydown', handleShowGraph)
+        // }
+        // if (objects.box6.position.x > 7 && objects.box6.position.x < 9 && objects.box6.position.z < -7 && objects.box6.position.z > -9) {
+        //     window.addEventListener('keydown', handleShowGraph)
+        // }
+        // if (objects.box6.position.x < -7 && objects.box6.position.x > -9 && objects.box6.position.z < -7 && objects.box6.position.z > -9) {
+        //     window.addEventListener('keydown', handleShowGraph)
+        // }
 
         // // Handle data visualization pop up upon user interaction (clicking "enter")
         // function handleShowGraph(e) {
