@@ -1,57 +1,93 @@
-Background:
+## Overview
 
-For this project I will be creating an interactive data visualization website using HTML, CSS and Javascript. I will be leveraging public APIs to source economic data including recent trends in inflation by country, CPI by category, changes in salary and FX changes together to see how buying power has increased or decreased in the past years. 
+Space Defense is a 3D space themed shooter also incorporating role-playing aspects (e.g. levels, experience bar). As the main character, you've journeyed through space and landed on a planet far, far away, only to find...
 
-Once data has been sourced and vetted, I will be utilizing D3.js to implement models such as line graphs or bar graphs to present the information in unique ways. I will also be using the three.js library to introduce another dimension to my website and analyses. Finally, I will be introducing interactivity by hiding certain charts behind regions of the globe where the user might select and behind customized HTML buttons which serve up information as requested. I will additionally attempt to make the data itself interactive allowing the user to zoom in on a specific quarter or period of time and examine a zoomed in version of the data.
+Survive for as long as you can and protect your base, your last chance of returning to earth.
 
-Functionality & MVPs
+Click [here](https://ziqi23.github.io/JS-Project/) to play now!
 
-    Core features
-    1- Data visualization
-    2- Interactive website via event listeners
+## Basic Controls
 
-    Additional features
-    1- Attention to layout and aesthetics, drawing inspiration from the Three.js community.
-    2- README file
+Toggle Instructions: `P` <br>
+Movement: `WASD` <br>
+Jump: `Space` <br>
+Aim/Shoot: `Cursor & Left-click` <br>
+Camera Adjustment: `Right-click` <br>
+Drink Potions: `Q & E` <br>
 
-Technologies, Libraries & APIs
-    
-    1- Three.js
-    2- D3.js
-    3- IMF Data API
-    4- NASDAQ Data API
-    5- BLS data API
+## Library Usage
 
-Implementation Timeline:
+`Three.js` - Utilized for creating elements of the game world and rendering its contents. 
+Specifically, the following elements were created using this library:
 
-    Friday (3/31) 
+### Main Components
+1. the `camera`, the coordinates of which represent the player's viewpoint.
+2. the `scene`, where all models live. Also makes individual models accessible through `scene.children`,
+3. the `light`, 
+4. the `simple 3d models`, which were creating using the library's built in geometries as well as `TextureLoader` to apply a texture coating,
+5. the `complex 3D models`, which were imported using the `OBJLoader` and `GLTFLoader` functionality,
 
-    - Create HTML skeleton.
-    - Implement JS logic to handle events.
-    - Find D3 and Three.js tutorials and familiarize with their API.
-    
-    Saturday (4/1)
+### Supporting Components
+1. THREE.Raycaster - assists in determining the coordinate at which the player's cursor is pointing.
+2. THREE.Clock - implements an internal clock to keep track of game time allowing for dynamic game design.
 
-    - Pull data from the free sources listed above.
-    - Format data and implement JS logic to create graphs on demand.
-    - Hide graphs until the user clicks on a certain trigger, then display via tooltip.
+## Key Features
 
-    Sunday (4/2)
+### 1. RPG Elements
+```img```
+Inspired by traditional RPG games, `Space Defense` showcases different skills (attack patterns) that can be toggled between by the player, an experience system increasing based on the number of enemies eliminated, HP and MP bars as well as potions.
 
-    - Deeper dive into Three.js and its capabilities.
-    - Format website to incorporate this functionality.
+The UI class tracks all of the above attributes, and within each frame of the game rendering, updates the UI display through DOM manipulation to dynamically present accurate HP, MP and EXP data.
 
-    Monday (4/3)
+<br>
 
-    - Deeper dive into Three.js and its capabilities.
-    - Format website to incorporate this functionality.
+Dynamically update HP potion count
+```
+if (document.getElementById("potion-count")) {
+    document.getElementById("potion-count").innerHTML = `${this.potions}`;
+} else {
+    let potionCount = document.createElement("h1");
+    potionCount.setAttribute("id", "potion-count");
+    potionCount.innerHTML = `${this.potions}`;
+    potionCount.style.position = 'absolute';
+    potionCount.style.zIndex = "40";
+    document.getElementById("ui").appendChild(potionCount);
+}
+```
 
-    Tuesday (4/4)
+<br>
 
-    - Deeper dive into Three.js and its capabilities.
-    - Format website to incorporate this functionality.
+Dynamically update HP bar display based on current health
+```
+let health = document.getElementById("hp-img");
+health.style.height = `${this.health / 100 * 215}px`
+```
 
-    Wednesday (4/5)
+### 2. Player Movement
 
-    - Deeper dive into Three.js and its capabilities.
-    - Format website to incorporate this functionality.
+Movement is simulated by listening for keydown events and shifting the player's position as well as the camera's position accordingly. Player can move in eight directions and can also jump. Gravity is simulated by gradually decreasing the player's y coordinate until it collides with another object.
+
+Upon keypress:
+```
+if (this.movementState.jump && Math.floor(box6.position.y) === 0) {
+    box6.position.y += 3;
+    this.movementState.jump = false;
+} else {
+    this.movementState.jump = false;
+}
+```
+
+<br>
+
+Within each frame:
+```
+if (objects.box6.position.y - 1.5 > plane.position.y) {
+    objects.box6.position.y += -0.05;
+}
+```
+            
+### 3. Projectile and Collision Management
+
+Projectiles in the game may be generated by either the player or the enemies. Projectiles are initially fixed to the position where they were generated (i.e. player's position or enemy position). After generation, `THREE.Raycaster` is used to determine the direction at which the projectile fires at.
+
+In each frame, projectiles are moved based on their set direction. Either collision logic or removal logic may be triggered to handle these projectiles if they collide with another object or fly too far away from the scene.
