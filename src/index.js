@@ -20,7 +20,7 @@ let numLoads = 0;
 
 export function start() {
     numLoads += 1;
-    if (numLoads === 4) {
+    if (numLoads === 5) {
         let logic = new WorldLogic(w, objects, ui);
         logic.run();
     }

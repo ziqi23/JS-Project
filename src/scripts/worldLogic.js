@@ -125,15 +125,15 @@ class WorldLogic {
             }
             // console.log(pointingTo)
         }
-
         // Listen for click (and specifically not a drag / camera angle adjustment), use pointingTo to fire object.
         document.addEventListener("mousedown", handleShoot)
         let shotObjects = [];
+        const skillOneTexture = new THREE.TextureLoader().load('./assets/energy-orb2.png');
         function handleShoot(e) {
             // console.log(e)
             if (e.buttons === 1 && currentSkill === 1 && ui.mana >= 1) {
-                const ballGeometry = new THREE.SphereGeometry(0.2, 64, 64);
-                const ballMaterial = new THREE.MeshToonMaterial({color: 0xD4DFEC});
+                const ballGeometry = new THREE.SphereGeometry(0.2, 64, 64);1
+                const ballMaterial = new THREE.MeshToonMaterial({map: skillOneTexture});
                 const ball = new THREE.Mesh(ballGeometry, ballMaterial);
                 ball.position.x = objects.box6.position.x;
                 ball.position.z = objects.box6.position.z;
@@ -141,12 +141,12 @@ class WorldLogic {
                 ball.name = "ball";
                 let audio = new Audio("./assets/laser-gun-shot.wav")
                 audio.play();
-                scene.add(ball);
+                scene.add(ball);1
                 ui.mana -= 1;
                 shotObjects.push([ball, pointingTo.x, pointingTo.z]);
             } else if (e.buttons === 1 && currentSkill === 2 && ui.mana >= 3) {
                 const coneGeometry = new THREE.ConeGeometry(2, 50, 10);
-                const coneMaterial = new THREE.MeshToonMaterial({color: 0xD4DFEC});
+                const coneMaterial = new THREE.MeshToonMaterial({map: skillOneTexture});
                 const cone = new THREE.Mesh(coneGeometry, coneMaterial);
                 cone.rotation.x = Math.PI;
                 cone.position.x = pointingTo.x;
@@ -234,6 +234,7 @@ class WorldLogic {
             enemies.forEach((enemy) => {
                 if (enemy.collided) {
                     scene.remove(enemy);
+                    ui.exp += 8;
                     score += 500;
                     document.getElementById("score").innerHTML = `Score: ${score}`
                     enemies.splice(enemies.indexOf(enemy), 1)
@@ -323,7 +324,7 @@ class WorldLogic {
                 objects.cylinder5.position.y += -0.05;
             }
 
-            if (objects.box6.position.y - 0.5 > plane.position.y) {
+            if (objects.box6.position.y - 1.5 > plane.position.y) {
                 objects.box6.position.y += -0.05;
             }
             

@@ -208,10 +208,20 @@ body {
   height: 15px;
 }
 
-#exp img {
+#exp-bar {
   margin-left: -6px;
   object-fit: fill;
   filter: grayscale(100%);
+}
+
+#dup-exp-bar {
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  margin-left: -6px;
+  object-fit: cover;
+  width: 0vw;
+  filter: hue-rotate(170deg);
 }
 
 /* #eci-graph {

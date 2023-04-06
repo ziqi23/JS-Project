@@ -77,6 +77,14 @@ class Ui {
                 }
             }
         })
+
+        document.addEventListener("mousedown", () => {
+            if (displayOn) {
+                menu.remove();
+                displayOn = false;
+            }
+        })
+        
     }
 
     buildUi() {
@@ -121,7 +129,15 @@ class Ui {
             el.style.opacity = "20%";
         }
 
-        // this.exp 
+        let el = document.getElementById("dup-exp-bar")
+        el.style.width = `${this.exp}vw`
+
+        if (this.exp >= 100) {
+            this.level += 1
+            this.potions += 1;
+            this.manaPotions += 1;
+            this.exp %= 100;
+        }        
     }
 }
 

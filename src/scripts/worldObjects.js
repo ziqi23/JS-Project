@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { start } from '..';
 
 class WorldObjects {
@@ -74,17 +75,17 @@ class WorldObjects {
         // console.log(this.box)
         // console.log(box6)
 
-        const geometry6 = new THREE.BoxGeometry( 1, 1, 1 )
-        const material6 = new THREE.MeshStandardMaterial({color: 0xEE6637});
-        const box6 = new THREE.Mesh( geometry6, material6 );
-        box6.castShadow = true;
-        box6.receiveShadow = true;
-        box6.position.x = 0;
-        box6.position.z = 0;
-        box6.position.y = 5;
-        box6.name = "box6"
-        world.scene.add( box6 );
-        this.box6 = box6;
+        // const geometry6 = new THREE.BoxGeometry( 1, 1, 1 )
+        // const material6 = new THREE.MeshStandardMaterial({color: 0xEE6637});
+        // const box6 = new THREE.Mesh( geometry6, material6 );
+        // box6.castShadow = true;
+        // box6.receiveShadow = true;
+        // box6.position.x = 0;
+        // box6.position.z = 0;
+        // box6.position.y = 5;
+        // box6.name = "box6"
+        // world.scene.add( box6 );
+        // this.box6 = box6;
 
         // Add Movement Logic - Allow center piece to move.
         window.addEventListener('keydown', handleMovement.bind(this))
@@ -191,71 +192,90 @@ class WorldObjects {
             that.scene.add(obj);
             start();
         })
+
+        // Construct Center Piece
+        const gltfLoader = new GLTFLoader();
+        await gltfLoader.load('./assets/center.glb', function(gltf) {
+            gltf.scene.scale.x = 0.3;
+            gltf.scene.scale.y = 0.3;
+            gltf.scene.scale.z = 0.3;
+            gltf.scene.position.y = 1.5;
+            // console.log(gltf.scene)
+            gltf.scene.rotation.y = Math.PI / 2;
+            gltf.scene.name = "box6";
+            that.scene.add(gltf.scene);
+            start();
+        })
     }
 
     move() {
         //Handle collision between projectiles and enemies - Map each object to its bounding box
+        let box6;
         this.objectsBoundingBox = {}
         this.scene.children.forEach((object) => {
+            if (object.name === "box6") {
+                box6 = object;
+            }
             if (this.objectsBoundingBox[object.uuid] === undefined) {
                 // console.log("a")
-                if (object.geometry || object.clock || object.name === "cylinder2" || object.name === "cylinder3" || object.name === "cylinder4" || object.name === "cylinder5") {
+                if (object.geometry || object.clock || object.name === "cylinder2" || object.name === "cylinder3" || object.name === "cylinder4" || object.name === "cylinder5" || object.name === "box6") {
                     this.objectsBoundingBox[object.uuid] = new THREE.Box3().setFromObject(object);
                 }
             }
         })
         // Simulate movement & jump (camera follows center piece)
         if (this.movementState.a) {
-            this.box6.position.x += -0.2
+            box6.position.x += -0.2
             this.camera.position.x += -0.2
             //if bounding box collides, revert operation
             this.scene.children.forEach((ele) => {
-                if (ele.name !== "plane" && this.objectsBoundingBox[ele.uuid] && ele.uuid !== this.box6.uuid && this.objectsBoundingBox[this.box6.uuid].intersectsBox(this.objectsBoundingBox[ele.uuid])) {
-                    this.box6.position.x += 0.4
+                if (ele.name !== "plane" && ele.name !== "ball" && this.objectsBoundingBox[ele.uuid] && ele.uuid !== box6.uuid && this.objectsBoundingBox[box6.uuid].intersectsBox(this.objectsBoundingBox[ele.uuid])) {
+                    console.log("collision with", ele)
+                    box6.position.x += 0.4
                     this.camera.position.x += 0.4
                 }
             })
         }
         
         if (this.movementState.d) {
-            this.box6.position.x += 0.2
+            box6.position.x += 0.2
             this.camera.position.x += 0.2
             //if bounding box collides, revert operation
             this.scene.children.forEach((ele) => {
-                if (ele.name !== "plane" && this.objectsBoundingBox[ele.uuid] && ele.uuid !== this.box6.uuid && this.objectsBoundingBox[this.box6.uuid].intersectsBox(this.objectsBoundingBox[ele.uuid])) {
-                    this.box6.position.x += -0.4
+                if (ele.name !== "plane" && ele.name !== "ball" && this.objectsBoundingBox[ele.uuid] && ele.uuid !== box6.uuid && this.objectsBoundingBox[box6.uuid].intersectsBox(this.objectsBoundingBox[ele.uuid])) {
+                    box6.position.x += -0.4
                     this.camera.position.x += -0.4
                 }
             })
         }
     
         if (this.movementState.w) {
-            this.box6.position.z += -0.2
+            box6.position.z += -0.2
             this.camera.position.z += -0.2
             //if bounding box collides, revert operation
             this.scene.children.forEach((ele) => {
-                if (ele.name !== "plane" && this.objectsBoundingBox[ele.uuid] && ele.uuid !== this.box6.uuid && this.objectsBoundingBox[this.box6.uuid].intersectsBox(this.objectsBoundingBox[ele.uuid])) {
-                    this.box6.position.z += 0.4
+                if (ele.name !== "plane" && ele.name !== "ball" && this.objectsBoundingBox[ele.uuid] && ele.uuid !== box6.uuid && this.objectsBoundingBox[box6.uuid].intersectsBox(this.objectsBoundingBox[ele.uuid])) {
+                    box6.position.z += 0.4
                     this.camera.position.z += 0.4
                 }
             })
         }
     
         if (this.movementState.s) {
-            this.box6.position.z += 0.2
+            box6.position.z += 0.2
             this.camera.position.z += 0.2
             //if bounding box collides, revert operation
             this.scene.children.forEach((ele) => {
-                if (ele.name !== "plane" && this.objectsBoundingBox[ele.uuid] && ele.uuid !== this.box6.uuid && this.objectsBoundingBox[this.box6.uuid].intersectsBox(this.objectsBoundingBox[ele.uuid])) {
-                    this.box6.position.z += -0.4
+                if (ele.name !== "plane" && ele.name !== "ball" && this.objectsBoundingBox[ele.uuid] && ele.uuid !== box6.uuid && this.objectsBoundingBox[box6.uuid].intersectsBox(this.objectsBoundingBox[ele.uuid])) {
+                    box6.position.z += -0.4
                     this.camera.position.z += -0.4
                 }
             })
         }
     
 
-        if (this.movementState.jump && Math.floor(this.box6.position.y) === 0) {
-            this.box6.position.y += 3
+        if (this.movementState.jump && Math.floor(box6.position.y) === 0) {
+            box6.position.y += 3
             this.movementState.jump = false;
         } else {
             this.movementState.jump = false;
