@@ -7,10 +7,50 @@ class Ui {
         this.potions = 3;
         this.manaPotions = 3;
 
-        let menu;
         let backgroundImage = document.createElement("img")
         backgroundImage.setAttribute("src", "./assets/menu.jpg")
         backgroundImage.style.filter = "saturate(150%)"
+
+        let imageBorder = document.createElement("img")
+        imageBorder.setAttribute("src", "./assets/menu-border.png")
+        imageBorder.style.position = "absolute"
+        imageBorder.style.left = '0'
+        imageBorder.style.top = '-2vh'
+        imageBorder.style.filter = "saturate(150%)"
+        imageBorder.style.filter = "opacity(70%)"
+
+        let text = document.createElement("div")
+        text.style.position = "absolute";
+        text.style.fontSize = "24px"
+        text.style.fontWeight = "normal"
+        text.style.fontFamily = "fantasy"
+        text.innerHTML = "Use WASD to control your airship movement. <br><br>\
+                    Move your mouse to aim and left-click to fire. <br><br>\
+                    Switch between attack modes using the numbers 1 & 2. <br>\
+                    Use Q and E to drink potions. They will restore your HP and MP to full. <br>\
+                    Hold right click to adjust camera angles. <br><br>\
+                    Once you're familiar with the basics, hit the four pillars to get started. <br>\
+                    Press P to toggle this menu on and off."
+        text.style.width = '50vw';
+        text.style.height = '30vh';
+        text.style.top = '22vh';
+        text.style.left = '10vw';
+        text.style.textAlign = 'center'
+
+        let menu = document.createElement("div")
+        menu.style.position = 'absolute'
+        menu.style.zIndex = '100'
+        menu.style.filter = "opacity(85%)"
+        menu.style.height = '70vh'
+        menu.style.width = '70vw'
+        menu.style.left = '15vw'
+        menu.style.top = '5vh'
+        menu.appendChild(backgroundImage)
+        menu.appendChild(text)
+        menu.appendChild(imageBorder)
+        document.getElementById("ui").appendChild(menu)
+
+        let displayOn = true;
 
         document.addEventListener("keydown", (e) => {
             if (e.code === "KeyQ") {
@@ -28,28 +68,12 @@ class Ui {
                     this.mana = 100;
                 }
             } else if (e.code === "KeyP") {
-                if (!menu) {
-                    menu = document.createElement("div")
-                    menu.style.position = 'absolute'
-                    menu.style.zIndex = '100'
-                    menu.style.textAlign = 'center'
-                    menu.innerHTML = "Use WASD to control your airship movement. \
-                    Move your mouse to aim and left-click to fire. \
-                    Switch between attack modes using the numbers 1 & 2. \
-                    Use Q and E to drink potions. They will restore your HP and MP to full. \
-                    Hold right click to adjust camera angles. \
-                    Once you're familiar with the basics, hit the four pillars to get started. "
-                    menu.style.filter = "opacity(90%)"
-                    menu.style.height = '70vh'
-                    menu.style.width = '70vw'
-                    menu.style.left = '15vw'
-                    menu.style.top = '5vh'
-                    menu.appendChild(backgroundImage)
-
+                if (!displayOn) {
                     document.getElementById("ui").appendChild(menu)
+                    displayOn = true;
                 } else {
                     menu.remove();
-                    menu = undefined;
+                    displayOn = false;
                 }
             }
         })
@@ -96,6 +120,8 @@ class Ui {
             let el = document.getElementById("blue")
             el.style.opacity = "20%";
         }
+
+        // this.exp 
     }
 }
 

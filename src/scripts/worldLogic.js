@@ -175,7 +175,7 @@ class WorldLogic {
 
             worldObjects.move();
             // console.log(enemies)
-            console.log(worldObjects.objectsBoundingBox)
+            // console.log(worldObjects.objectsBoundingBox)
 
             // Move all projectiles and delete ones that are too far out
             shotObjects.forEach((ballArray) => {

@@ -204,9 +204,14 @@ body {
 #exp {
   position: absolute;
   top: 91.5vh;
-  width: 90vw;
-  height: 25px;
-  object-fit: cover;
+  width: 100vw;
+  height: 15px;
+}
+
+#exp img {
+  margin-left: -6px;
+  object-fit: fill;
+  filter: grayscale(100%);
 }
 
 /* #eci-graph {

@@ -56,6 +56,7 @@ class World {
         const bgMaterial = new THREE.MeshStandardMaterial({map: globeTexture});
         const bg = new THREE.Mesh( bgGeometry, bgMaterial );
         bg.position.x = 200;
+        bg.position.y = -20;
         bg.position.z = -450;
         bg.name = "sky"
         scene.add( bg );
