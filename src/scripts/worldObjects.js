@@ -86,7 +86,6 @@ class WorldObjects {
         })
         
         await loader.load("./assets/startRock.obj", function(obj) {
-            console.log(obj)
             obj.scale.x = 0.13;
             obj.scale.y = 0.13;
             obj.scale.z = 0.13;
@@ -100,7 +99,6 @@ class WorldObjects {
         
         // Construct Cylinder 4
         await loader.load("./assets/startRock.obj", function(obj) {
-            console.log(obj)
             obj.scale.x = 0.13;
             obj.scale.y = 0.13;
             obj.scale.z = 0.13;

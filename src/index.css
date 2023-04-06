@@ -224,7 +224,7 @@ body {
 
 #endgame-stats {
     position: absolute;
-    background-color: gray;
+    /* background-color: gray; */
     visibility: hidden;
     z-index: 100;
     height: 70vh;
@@ -233,21 +233,16 @@ body {
     top: 5vh;
 }
 
+#endgame-stats img {
+    position: absolute;
+}
+
 #stats {
     text-align: center;
     font-size: 36px;
     font-family: cursive;
     color: rgb(56, 27, 27);
     position: absolute;
-    top: 10vh;
-    left: 10vw;
+    top: 20vh;
+    left: 23vw;
 }
-
-
-/* #eci-graph {
-    background-color: rgb(148, 148, 158);
-    position: absolute;
-    top: 600px;
-    z-index: 100;
-
-} */

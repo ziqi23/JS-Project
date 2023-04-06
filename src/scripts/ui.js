@@ -36,7 +36,7 @@ class Ui {
                     Press P to toggle this menu on and off.";
         text.style.width = '50vw';
         text.style.height = '30vh';
-        text.style.top = '22vh';
+        text.style.top = '15vh';
         text.style.left = '10vw';
         text.style.textAlign = 'center';
 
@@ -81,8 +81,11 @@ class Ui {
                     menu.remove();
                     displayOn = false;
                 }
+            } else if (e.code === "Enter") {
+                document.getElementById("endgame-stats").style.visibility = "hidden";
             }
         })
+
 
         // Another option to stop menu from displaying is to click anywhere on the screen
         document.addEventListener("mousedown", () => {

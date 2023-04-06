@@ -325,6 +325,7 @@ class WorldLogic {
                 ui.mana = 100;
                 ui.potions = 3;
                 ui.manaPotions = 3;
+                round = 1;
                 scene.add(objects.cylinder2);
                 scene.add(objects.cylinder3);
                 scene.add(objects.cylinder4);
@@ -355,13 +356,13 @@ class WorldLogic {
                         rating = "S";
                         break;
                 }
-
                 let stats = document.getElementById("stats");
                 stats.innerHTML = `Total number of shots: ${shotCount}<br>
                 Total hits: ${hitCount}<br>
                 Accuracy: ${shotCount ? Math.floor(hitCount / shotCount * 100) : 0}%<br>
                 Total time survived: ${Math.floor(playTimeClock.getElapsedTime())} seconds<br>
-                Rating: ${rating}`;
+                Rating: ${rating}<br><br>
+                Press 'enter' to play again!`
             }
         }
 
