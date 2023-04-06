@@ -24,6 +24,9 @@ class WorldLogic {
         let camera = this.camera;
         let renderer = this.renderer;
         let ui = this.ui;
+        let shotCount = 0;
+        let hitCount = 0;
+        let playTimeClock = new THREE.Clock();
         let stats = [];
         let objects = {
             cylinder2: undefined, 
@@ -32,7 +35,6 @@ class WorldLogic {
             cylinder5: undefined, 
             box6: undefined, 
         }
-
         
         // console.log(model)
         scene.children.forEach((child) => {
@@ -141,7 +143,8 @@ class WorldLogic {
                 ball.name = "ball";
                 let audio = new Audio("./assets/laser-gun-shot.wav")
                 audio.play();
-                scene.add(ball);1
+                scene.add(ball);
+                shotCount += 1;
                 ui.mana -= 1;
                 shotObjects.push([ball, pointingTo.x, pointingTo.z]);
             } else if (e.buttons === 1 && currentSkill === 2 && ui.mana >= 3) {
@@ -157,6 +160,7 @@ class WorldLogic {
                 audio.play();
                 // cone.position.y = objects.box6.position.y;
                 scene.add(cone);
+                shotCount += 1;
                 ui.mana -= 3;
                 shotObjects.push([cone, pointingTo.x, pointingTo.z]);
             }
@@ -234,6 +238,7 @@ class WorldLogic {
             enemies.forEach((enemy) => {
                 if (enemy.collided) {
                     scene.remove(enemy);
+                    hitCount += 1;
                     ui.exp += 8;
                     score += 500;
                     document.getElementById("score").innerHTML = `Score: ${score}`
@@ -329,7 +334,7 @@ class WorldLogic {
             }
             
 
-        
+            console.log(playTimeClock.getElapsedTime())
             camera.lookAt(objects.box6.position);
             renderer.render(scene, camera)
             
@@ -350,14 +355,37 @@ class WorldLogic {
                 scene.add(objects.cylinder4)
                 scene.add(objects.cylinder5)
                 camera.position.set(0, 10, 30);
-                let gameOverPopUp = document.createElement("div")
-                gameOverPopUp.innerHTML = "GAME OVER"
-                gameOverPopUp.style.fontSize = "72px"
-                gameOverPopUp.style.color = "red"
-                gameOverPopUp.style.position = "absolute"
-                gameOverPopUp.style.top = '25vh'
-                gameOverPopUp.style.left = '25vw';
-                document.getElementById("ui").appendChild(gameOverPopUp);
+
+                let gameOver = document.getElementById("endgame-stats")
+                gameOver.style.visibility = "visible";
+
+                let graph = document.getElementById("endgame-graph");
+
+                let score = shotCount? Math.floor(hitCount ** 2 / shotCount * playTimeClock.getElapsedTime()) : 0;
+                let rating;
+                switch (true) {
+                    case (score < 99):
+                        rating = "D";
+                        break;
+                    case (score >= 100 && score < 999):
+                        rating = "C";
+                        break;
+                    case (score >= 1000 && score < 9999):
+                        rating = "B";
+                        break;
+                    case (score >= 10000 && score < 99999):
+                        rating = "A";
+                        break;
+                    case (score >= 100000):
+                        rating = "S";
+                        break;
+                }
+                let stats = document.getElementById("stats");
+                stats.innerHTML = `Total number of shots: ${shotCount}<br>
+                Total hits: ${hitCount}<br>
+                Accuracy: ${shotCount ? Math.floor(hitCount / shotCount * 100) : 0}%<br>
+                Total time survived: ${Math.floor(playTimeClock.getElapsedTime())} seconds<br>
+                Rating: ${rating}`
             }
         }
         update();
