@@ -70,7 +70,7 @@ class WorldLogic {
 
         async function gameStart() {
             // Create enemies in a for loop
-            for (let i = 0; i < 5 * round; i++) {
+            for (let i = 0; i < 5 + 2 * (round - 1); i++) {
                 const loader = new OBJLoader();
                 await loader.load("./assets/ufoobj.obj", function(obj) {
                     obj.children[0].material = new THREE.MeshStandardMaterial({map: metalTexture});
