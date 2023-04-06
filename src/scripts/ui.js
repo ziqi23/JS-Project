@@ -58,7 +58,7 @@ class Ui {
                     let audio = new Audio("./assets/drink-potion.mp3")
                     audio.play();
                     this.potions -= 1;
-                    this.health = 0;
+                    this.health = 100;
                 }
             } else if (e.code === "KeyE") {
                 if (this.manaPotions >= 1) {

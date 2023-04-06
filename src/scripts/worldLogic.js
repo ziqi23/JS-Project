@@ -239,7 +239,7 @@ class WorldLogic {
                 if (enemy.collided) {
                     scene.remove(enemy);
                     hitCount += 1;
-                    ui.exp += 8;
+                    ui.exp += 2;
                     score += 500;
                     document.getElementById("score").innerHTML = `Score: ${score}`
                     enemies.splice(enemies.indexOf(enemy), 1)
