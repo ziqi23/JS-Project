@@ -10,6 +10,24 @@ import Ui from './scripts/ui.js';
 const cpiGraph = document.getElementById("svg-graph");
 const eciGraph = document.getElementById("eci-graph");
 
+
+let w = new World();
+let objects = new WorldObjects(w);
+objects.constructRocks.apply(objects);
+let ui = new Ui()
+let numLoads = 0;
+
+
+export function start() {
+    numLoads += 1;
+    if (numLoads === 4) {
+        let logic = new WorldLogic(w, objects, ui);
+        logic.run();
+    }
+}
+
+
+
 // async function createEciGraph(startYear, endYear, type="general") {
 //     let d = new Data();
 //     let g = new CreateGraph();
@@ -62,18 +80,7 @@ const eciGraph = document.getElementById("eci-graph");
 //     document.getElementById("eci-holder").appendChild(newContainer);
 //     createEciGraph(2015, 2022);
 // }
-async function start() {
-    let w = new World();
-    let objects = await new WorldObjects(w);
-    await objects.constructRocks.apply(objects);
-    let ui = new Ui()
-    // const model = await objects.loadModel();
-    // console.log(model)
-    let logic = new WorldLogic(w, objects, ui);
-    logic.run();
-}
 
-start();
 // document.body.appendChild(renderer.domElement);
 
 // const scene = new THREE.Scene();

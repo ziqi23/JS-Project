@@ -7,13 +7,18 @@ class Ui {
         this.potions = 3;
         this.manaPotions = 3;
 
+        let menu;
+        let backgroundImage = document.createElement("img")
+        backgroundImage.setAttribute("src", "./assets/menu.jpg")
+        backgroundImage.style.filter = "saturate(150%)"
+
         document.addEventListener("keydown", (e) => {
             if (e.code === "KeyQ") {
                 if (this.potions >= 1) {
                     let audio = new Audio("./assets/drink-potion.mp3")
                     audio.play();
                     this.potions -= 1;
-                    this.health = 100;
+                    this.health = 0;
                 }
             } else if (e.code === "KeyE") {
                 if (this.manaPotions >= 1) {
@@ -21,6 +26,30 @@ class Ui {
                     audio.play();
                     this.manaPotions -= 1;
                     this.mana = 100;
+                }
+            } else if (e.code === "KeyP") {
+                if (!menu) {
+                    menu = document.createElement("div")
+                    menu.style.position = 'absolute'
+                    menu.style.zIndex = '100'
+                    menu.style.textAlign = 'center'
+                    menu.innerHTML = "Use WASD to control your airship movement. \
+                    Move your mouse to aim and left-click to fire. \
+                    Switch between attack modes using the numbers 1 & 2. \
+                    Use Q and E to drink potions. They will restore your HP and MP to full. \
+                    Hold right click to adjust camera angles. \
+                    Once you're familiar with the basics, hit the four pillars to get started. "
+                    menu.style.filter = "opacity(90%)"
+                    menu.style.height = '70vh'
+                    menu.style.width = '70vw'
+                    menu.style.left = '15vw'
+                    menu.style.top = '5vh'
+                    menu.appendChild(backgroundImage)
+
+                    document.getElementById("ui").appendChild(menu)
+                } else {
+                    menu.remove();
+                    menu = undefined;
                 }
             }
         })
@@ -34,8 +63,6 @@ class Ui {
             potionCount.setAttribute("id", "potion-count");
             potionCount.innerHTML = `${this.potions}`
             potionCount.style.position = 'absolute';
-            potionCount.style.top = '78vh'
-            potionCount.style.left = '17vw';
             potionCount.style.zIndex = "40";
             document.getElementById("ui").appendChild(potionCount);
         }
@@ -47,8 +74,6 @@ class Ui {
             mpPotionCount.setAttribute("id", "mp-potion-count");
             mpPotionCount.innerHTML = `${this.manaPotions}`
             mpPotionCount.style.position = 'absolute';
-            mpPotionCount.style.top = '78vh'
-            mpPotionCount.style.left = '27vw';
             mpPotionCount.style.zIndex = "40";
             document.getElementById("ui").appendChild(mpPotionCount);
         }

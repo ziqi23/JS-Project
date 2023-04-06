@@ -67,8 +67,8 @@ canvas {
     width: 50px;
     height: 50px;
     position: absolute;
-    top: 80.6vh;
-    right: 23.8vw;
+    left: 123px;
+    top: 8px;
     border: 2px solid gold;
     z-index: 30;
 }
@@ -77,8 +77,8 @@ canvas {
     width: 50px;
     height: 50px;
     position: absolute;
-    top: 80.6vh;
-    right: 19.8vw;
+    left: 181px;
+    top: 8px;
     border: 2px solid black;
     z-index: 30;
 }
@@ -167,8 +167,8 @@ body {
 
 #red {
     position: absolute;
-    top: 81.5vh;
-    left: 18vw;
+    top: 15px;
+    left: 280px;
     width: 100px;
     height: 100px;
     z-index: 40;
@@ -178,8 +178,8 @@ body {
 
 #blue {
     position: absolute;
-    top: 81.5vh;
-    left: 28vw;
+    top: 15px;
+    left: 400px;
     width: 100px;
     height: 100px;
     z-index: 40;
@@ -187,6 +187,25 @@ body {
     filter: saturate(200%);
 }
 
+#potion-count {
+    font-family: cursive;
+    top: 78vh;
+    left: 260px;
+}
+
+#mp-potion-count {
+    font-family: cursive;
+    top: 78vh;
+    left: 380px;
+}
+
+#exp {
+    position: absolute;
+    top: 91.5vh;
+    width: 90vw;
+    height: 25px;
+    object-fit: cover;
+}
 /* #eci-graph {
     background-color: rgb(148, 148, 158);
     position: absolute;

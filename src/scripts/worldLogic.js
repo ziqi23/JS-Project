@@ -6,14 +6,13 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
 
 class WorldLogic {
-    constructor(world, worldObjects, ui, model) {
+    constructor(world, worldObjects, ui) {
         this.scene = world.scene
         this.camera = world.camera
         this.renderer = world.renderer
         this.plane = world.plane
         this.worldObjects = worldObjects
         this.ui = ui;
-        this.model = model
     }
     
     run() {
@@ -24,8 +23,8 @@ class WorldLogic {
         let plane = this.plane;
         let camera = this.camera;
         let renderer = this.renderer;
-        let model = this.model;
         let ui = this.ui;
+        let stats = [];
         let objects = {
             cylinder2: undefined, 
             cylinder3: undefined, 
@@ -33,12 +32,16 @@ class WorldLogic {
             cylinder5: undefined, 
             box6: undefined, 
         }
+
+        
         // console.log(model)
         scene.children.forEach((child) => {
             if (Object.keys(objects).includes(child.name)) {
                 objects[child.name] = child
             }
-        })       
+        })   
+        
+        console.log(objects)
         // console.log(worldObjects)
         // objects["box6"] = worldObjects.box;
         // console.log(objects)
@@ -132,8 +135,6 @@ class WorldLogic {
                 const ballGeometry = new THREE.SphereGeometry(0.2, 64, 64);
                 const ballMaterial = new THREE.MeshToonMaterial({color: 0xD4DFEC});
                 const ball = new THREE.Mesh(ballGeometry, ballMaterial);
-                ball.castShadow = true;
-                ball.receiveShadow = true;
                 ball.position.x = objects.box6.position.x;
                 ball.position.z = objects.box6.position.z;
                 ball.position.y = objects.box6.position.y;
@@ -142,7 +143,6 @@ class WorldLogic {
                 audio.play();
                 scene.add(ball);
                 ui.mana -= 1;
-                // console.log("here", pointingTo.x, pointingTo.z)
                 shotObjects.push([ball, pointingTo.x, pointingTo.z]);
             } else if (e.buttons === 1 && currentSkill === 2 && ui.mana >= 3) {
                 const coneGeometry = new THREE.ConeGeometry(2, 50, 10);
@@ -175,7 +175,7 @@ class WorldLogic {
 
             worldObjects.move();
             // console.log(enemies)
-            // console.log(worldObjects.objectsBoundingBox)
+            console.log(worldObjects.objectsBoundingBox)
 
             // Move all projectiles and delete ones that are too far out
             shotObjects.forEach((ballArray) => {
@@ -208,34 +208,26 @@ class WorldLogic {
             
             // Game start condition
             if (objects.cylinder2.collided === true) {
-                objects.cylinder2.material.color.setHex(0xffff00)
+                scene.remove(objects.cylinder2)
             }
             if (objects.cylinder3.collided === true) {
-                objects.cylinder3.material.color.setHex(0x23E937)
+                scene.remove(objects.cylinder3)
             }
             if (objects.cylinder4.collided === true) {
-                objects.cylinder4.material.color.setHex(0x273695)
+                scene.remove(objects.cylinder4)
             }
             if (objects.cylinder5.collided === true) {
-                objects.cylinder5.material.color.setHex(0xB61D1D)
+                scene.remove(objects.cylinder5)
             }
 
             if (objects.cylinder2.collided === true && objects.cylinder3.collided === true && objects.cylinder4.collided === true && objects.cylinder5.collided === true) {
                 let audio = new Audio("./assets/alien-hum.wav")
                 audio.play();
                 gameStart();
-                scene.remove(objects.cylinder2)
-                scene.remove(objects.cylinder3)
-                scene.remove(objects.cylinder4)
-                scene.remove(objects.cylinder5)
                 objects.cylinder2.collided = false;
                 objects.cylinder3.collided = false;
                 objects.cylinder4.collided = false;
                 objects.cylinder5.collided = false;
-                objects.cylinder2.material.color.setHex(0xffffff)
-                objects.cylinder3.material.color.setHex(0xffffff)
-                objects.cylinder4.material.color.setHex(0xffffff)
-                objects.cylinder5.material.color.setHex(0xffffff)
             }
 
             // Enemy hit logic
@@ -289,7 +281,6 @@ class WorldLogic {
             })
             // console.log(ui.health)
             // console.log(playerHitClock.getElapsedTime())
-
             if (objects.box6.collided === true && playerHitClock.getElapsedTime() > 1) {
                 if (!popUp) {
                     let audio = new Audio("./assets/player-hit.mp3")
@@ -318,6 +309,7 @@ class WorldLogic {
             }
 
             objects.box6.collided = false;
+
 
             ui.buildUi();
             
@@ -361,12 +353,9 @@ class WorldLogic {
                 gameOverPopUp.innerHTML = "GAME OVER"
                 gameOverPopUp.style.fontSize = "72px"
                 gameOverPopUp.style.color = "red"
-                gameOverPopUp.style.backgroundColor = "gray"
                 gameOverPopUp.style.position = "absolute"
                 gameOverPopUp.style.top = '25vh'
                 gameOverPopUp.style.left = '25vw';
-                gameOverPopUp.style.width = '800px'
-                gameOverPopUp.style.height = '400px';
                 document.getElementById("ui").appendChild(gameOverPopUp);
             }
         }

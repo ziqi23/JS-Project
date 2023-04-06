@@ -1,60 +1,61 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { start } from '..';
 
 class WorldObjects {
     constructor(world) {
         this.scene = world.scene;
         this.camera = world.camera;
 
-        // Construct Cylinder 1
-        const geometry2 = new THREE.CylinderGeometry( 1, 1, 3, 20);
-        const material2 = new THREE.MeshStandardMaterial({color: 0xffffff});
-        const cylinder2 = new THREE.Mesh( geometry2, material2 );
-        cylinder2.castShadow = true;
-        cylinder2.receiveShadow = true;
-        cylinder2.position.x = -8;
-        cylinder2.position.z = -8;
-        cylinder2.position.y = 5;
-        cylinder2.name = "cylinder2"
-        world.scene.add( cylinder2 );
+        // // Construct Cylinder 1
+        // const geometry2 = new THREE.CylinderGeometry( 1, 1, 3, 20);
+        // const material2 = new THREE.MeshStandardMaterial({color: 0xffffff});
+        // const cylinder2 = new THREE.Mesh( geometry2, material2 );
+        // cylinder2.castShadow = true;
+        // cylinder2.receiveShadow = true;
+        // cylinder2.position.x = -8;
+        // cylinder2.position.z = -8;
+        // cylinder2.position.y = 5;
+        // cylinder2.name = "cylinder2"
+        // world.scene.add( cylinder2 );
 
-        // Construct Cylinder 2
-        const geometry3 = new THREE.CylinderGeometry( 1, 1, 3, 20);
-        const material3 = new THREE.MeshStandardMaterial({color: 0xffffff});
-        const cylinder3 = new THREE.Mesh( geometry3, material3 );
-        cylinder3.castShadow = true;
-        cylinder3.receiveShadow = true;
-        cylinder3.position.x = -8;
-        cylinder3.position.z = 8;
-        cylinder3.position.y = 5;
-        cylinder3.name = "cylinder3"
-        world.scene.add( cylinder3 );
+        // // Construct Cylinder 2
+        // const geometry3 = new THREE.CylinderGeometry( 1, 1, 3, 20);
+        // const material3 = new THREE.MeshStandardMaterial({color: 0xffffff});
+        // const cylinder3 = new THREE.Mesh( geometry3, material3 );
+        // cylinder3.castShadow = true;
+        // cylinder3.receiveShadow = true;
+        // cylinder3.position.x = -8;
+        // cylinder3.position.z = 8;
+        // cylinder3.position.y = 5;
+        // cylinder3.name = "cylinder3"
+        // world.scene.add( cylinder3 );
         
         
-        // Construct Cylinder 3
-        const geometry4 = new THREE.CylinderGeometry( 1, 1, 3, 20);
-        const material4 = new THREE.MeshStandardMaterial({color: 0xffffff});
-        const cylinder4 = new THREE.Mesh( geometry4, material4 );
-        cylinder4.castShadow = true;
-        cylinder4.receiveShadow = true;
-        cylinder4.position.x = 8;
-        cylinder4.position.z = 8;
-        cylinder4.position.y = 5;
-        cylinder4.name = "cylinder4"
-        world.scene.add( cylinder4 );
+        // // Construct Cylinder 3
+        // const geometry4 = new THREE.CylinderGeometry( 1, 1, 3, 20);
+        // const material4 = new THREE.MeshStandardMaterial({color: 0xffffff});
+        // const cylinder4 = new THREE.Mesh( geometry4, material4 );
+        // cylinder4.castShadow = true;
+        // cylinder4.receiveShadow = true;
+        // cylinder4.position.x = 8;
+        // cylinder4.position.z = 8;
+        // cylinder4.position.y = 5;
+        // cylinder4.name = "cylinder4"
+        // world.scene.add( cylinder4 );
         
 
-        // Construct Cylinder 4
-        const geometry5 = new THREE.CylinderGeometry( 1, 1, 3, 20);
-        const material5 = new THREE.MeshStandardMaterial({color: 0xffffff});
-        const cylinder5 = new THREE.Mesh( geometry5, material5 );
-        cylinder5.castShadow = true;
-        cylinder5.receiveShadow = true;
-        cylinder5.position.x = 8;
-        cylinder5.position.z = -8;
-        cylinder5.position.y = 5;
-        cylinder5.name = "cylinder5"
-        world.scene.add( cylinder5 );
+        // // Construct Cylinder 4
+        // const geometry5 = new THREE.CylinderGeometry( 1, 1, 3, 20);
+        // const material5 = new THREE.MeshStandardMaterial({color: 0xffffff});
+        // const cylinder5 = new THREE.Mesh( geometry5, material5 );
+        // cylinder5.castShadow = true;
+        // cylinder5.receiveShadow = true;
+        // cylinder5.position.x = 8;
+        // cylinder5.position.z = -8;
+        // cylinder5.position.y = 5;
+        // cylinder5.name = "cylinder5"
+        // world.scene.add( cylinder5 );
 
         // Construct center movable object 
         // let box;       
@@ -124,7 +125,6 @@ class WorldObjects {
                 }
             }
         }
-
         
         // Render objects
         world.renderer.render(world.scene, world.camera);
@@ -136,7 +136,7 @@ class WorldObjects {
         const loader = new OBJLoader();
         const rockTexture = new THREE.TextureLoader().load('./assets/rocktexture.jpg');
         await loader.load("./assets/startRock.obj", function(obj) {
-            console.log(obj)
+            // console.log(obj)
             obj.scale.x = 0.13
             obj.scale.y = 0.13
             obj.scale.z = 0.13
@@ -145,11 +145,12 @@ class WorldObjects {
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder2"
             that.scene.add(obj);
+            start();
         })
 
         // Construct Cylinder 2
         await loader.load("./assets/startRock.obj", function(obj) {
-            console.log(obj)
+            // console.log(obj)
             obj.scale.x = 0.13
             obj.scale.y = 0.13
             obj.scale.z = 0.13
@@ -158,6 +159,7 @@ class WorldObjects {
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder3"
             that.scene.add(obj);
+            start();
         })
         
         // Construct Cylinder 3
@@ -173,6 +175,7 @@ class WorldObjects {
             obj.name = "cylinder4"
             // obj.clock = new THREE.Clock();
             that.scene.add(obj);
+            start();
         })
         
         // Construct Cylinder 4
@@ -186,6 +189,7 @@ class WorldObjects {
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder5"
             that.scene.add(obj);
+            start();
         })
     }
 
@@ -195,7 +199,7 @@ class WorldObjects {
         this.scene.children.forEach((object) => {
             if (this.objectsBoundingBox[object.uuid] === undefined) {
                 // console.log("a")
-                if (object.geometry || object.clock) {
+                if (object.geometry || object.clock || object.name === "cylinder2" || object.name === "cylinder3" || object.name === "cylinder4" || object.name === "cylinder5") {
                     this.objectsBoundingBox[object.uuid] = new THREE.Box3().setFromObject(object);
                 }
             }

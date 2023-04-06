@@ -36,29 +36,29 @@ class World {
         scene.add( plane );
 
         // Initialize base
-            const gltfLoader = new GLTFLoader();
-            gltfLoader.load('./assets/ISS_stationary.glb', function(gltf) {
-                // gltf.scene.scale.x = 1;
-                // gltf.scene.scale.y = 0.02;
-                // gltf.scene.scale.z = 0.02;
-                gltf.scene.position.x = 30;
-                gltf.scene.position.y = 10;
-                gltf.scene.position.z = 40;
-                gltf.scene.rotation.z = Math.PI;
-                gltf.scene.rotation.y = Math.PI / 4;
-                scene.add(gltf.scene);
-                console.log(gltf.scene)
-            })
+        const gltfLoader = new GLTFLoader();
+        gltfLoader.load('./assets/ISS_stationary.glb', function(gltf) {
+            // gltf.scene.scale.x = 1;
+            // gltf.scene.scale.y = 0.02;
+            // gltf.scene.scale.z = 0.02;
+            gltf.scene.position.x = 30;
+            gltf.scene.position.y = 10;
+            gltf.scene.position.z = 40;
+            gltf.scene.rotation.z = Math.PI;
+            gltf.scene.rotation.y = Math.PI / 4;
+            scene.add(gltf.scene);
+            console.log(gltf.scene)
+        })
 
         // Initialize background
-            const globeTexture = new THREE.TextureLoader().load('./assets/globetexture.png');
-            const bgGeometry = new THREE.SphereGeometry( 200, 64, 64 );
-            const bgMaterial = new THREE.MeshStandardMaterial({map: globeTexture});
-            const bg = new THREE.Mesh( bgGeometry, bgMaterial );
-            bg.position.x = 200;
-            bg.position.z = -450;
-            bg.name = "sky"
-            scene.add( bg );
+        const globeTexture = new THREE.TextureLoader().load('./assets/globetexture.png');
+        const bgGeometry = new THREE.SphereGeometry( 200, 64, 64 );
+        const bgMaterial = new THREE.MeshStandardMaterial({map: globeTexture});
+        const bg = new THREE.Mesh( bgGeometry, bgMaterial );
+        bg.position.x = 200;
+        bg.position.z = -450;
+        bg.name = "sky"
+        scene.add( bg );
 
         // Initialize terrain
         const loader = new OBJLoader();
@@ -79,7 +79,7 @@ class World {
             obj.name = "sky"
             // obj.rotation.y = -Math.PI / 2
             // obj.clock = new THREE.Clock();
-            console.log(obj)
+            // console.log(obj)
             scene.add(obj);
         })
 
