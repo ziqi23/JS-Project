@@ -34,7 +34,6 @@ Specifically, the following elements were created using this library:
 ## Key Features
 
 ### 1. RPG Elements
-```img```
 Inspired by traditional RPG games, `Space Defense` showcases different skills (attack patterns) that can be toggled between by the player, an experience system increasing based on the number of enemies eliminated, HP and MP bars as well as potions.
 
 The UI class tracks all of the above attributes, and within each frame of the game rendering, updates the UI display through DOM manipulation to dynamically present accurate HP, MP and EXP data.
@@ -42,7 +41,7 @@ The UI class tracks all of the above attributes, and within each frame of the ga
 <br>
 
 Dynamically update HP potion count
-```
+```js
 if (document.getElementById("potion-count")) {
     document.getElementById("potion-count").innerHTML = `${this.potions}`;
 } else {
@@ -68,7 +67,7 @@ health.style.height = `${this.health / 100 * 215}px`
 Movement is simulated by listening for keydown events and shifting the player's position as well as the camera's position accordingly. Player can move in eight directions and can also jump. Gravity is simulated by gradually decreasing the player's y coordinate until it collides with another object.
 
 Upon keypress:
-```
+```js
 if (this.movementState.jump && Math.floor(box6.position.y) === 0) {
     box6.position.y += 3;
     this.movementState.jump = false;
@@ -80,7 +79,7 @@ if (this.movementState.jump && Math.floor(box6.position.y) === 0) {
 <br>
 
 Within each frame:
-```
+```js
 if (objects.box6.position.y - 1.5 > plane.position.y) {
     objects.box6.position.y += -0.05;
 }
