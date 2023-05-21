@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { start } from '..';
+import { load } from '..';
 
 class WorldObjects {
     constructor(world) {
@@ -69,7 +69,7 @@ class WorldObjects {
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder2";
             that.scene.add(obj);
-            start();
+            load();
         })
 
         // Construct Cylinder 2
@@ -82,7 +82,7 @@ class WorldObjects {
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder3";
             that.scene.add(obj);
-            start();
+            load();
         })
         
         await loader.load("./assets/startRock.obj", function(obj) {
@@ -94,7 +94,7 @@ class WorldObjects {
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder4";
             that.scene.add(obj);
-            start();
+            load();
         })
         
         // Construct Cylinder 4
@@ -107,7 +107,7 @@ class WorldObjects {
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder5";
             that.scene.add(obj);
-            start();
+            load();
         })
 
         // Construct Center Piece
@@ -120,7 +120,7 @@ class WorldObjects {
             gltf.scene.rotation.y = Math.PI / 2;
             gltf.scene.name = "box6";
             that.scene.add(gltf.scene);
-            start();
+            load();
         })
     }
 

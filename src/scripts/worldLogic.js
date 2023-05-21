@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-// const Data = require('./data.js');
-// const CreateGraph = require('./createGraph.js');
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
 
@@ -61,6 +59,33 @@ class WorldLogic {
             }
         }
 
+        // Handle 'tab' to select enemies
+        let selectedEnemyIdx = 0;
+        let selectedEnemy;
+        let selectedEnemyMesh;
+        window.addEventListener('keydown', handleTab)
+        function handleTab(e) {
+            e.preventDefault()
+            if (selectedEnemyMesh) {
+                scene.remove(selectedEnemyMesh)
+            }
+            if (e.key === 'Tab') {
+                selectedEnemy = enemies[selectedEnemyIdx % enemies.length]
+                selectedEnemyIdx += 1
+            }
+            const boundingBox = new THREE.Box3().setFromObject(selectedEnemy);
+            const selectedEnemyGeometry = new THREE.CircleGeometry(5, 32);
+            const selectedEnemyMaterial = new THREE.MeshStandardMaterial({color: 0xFFFFFF});
+            selectedEnemyMaterial.side = THREE.DoubleSide;
+
+            selectedEnemyMesh = new THREE.Mesh(selectedEnemyGeometry, selectedEnemyMaterial);
+            selectedEnemyMesh.rotation.x = Math.PI / 4
+            selectedEnemyMesh.position.x = (boundingBox.max.x + boundingBox.min.x) / 2
+            selectedEnemyMesh.position.y = 10;
+            selectedEnemyMesh.position.z = (boundingBox.max.z + boundingBox.min.z) / 2
+            scene.add(selectedEnemyMesh)
+        }
+
         // gameStart() called when after tutorial, enemy spawn logic
         let round = 1;
         let enemies = [];
@@ -70,6 +95,7 @@ class WorldLogic {
 
         async function gameStart() {
             // Create enemies in a for loop
+            selectedEnemyIdx = 0;
             for (let i = 0; i < 5 + 2 * (round - 1); i++) {
                 const loader = new OBJLoader();
                 await loader.load("./assets/ufoobj.obj", function(obj) {
@@ -84,8 +110,23 @@ class WorldLogic {
                     obj.clock = new THREE.Clock();
                     scene.add(obj);
                     enemies.push(obj);
+                    enemies.sort(sortEnemies)
                 })
             }
+
+            function sortEnemies(a, b) {
+                const playerLocation = objects.box6.position;
+                const distanceFromA = Math.sqrt((a.position.x - playerLocation.x) ** 2 + 
+                (a.position.y - playerLocation.y) ** 2 + 
+                (a.position.z - playerLocation.z) ** 2)
+                const distanceFromB = Math.sqrt((b.position.x - playerLocation.x) ** 2 + 
+                (b.position.y - playerLocation.y) ** 2 + 
+                (b.position.z - playerLocation.z) ** 2)
+                if (distanceFromA < distanceFromB) return -1
+                if (distanceFromA > distanceFromB) return 1
+                return 0;
+            }
+
             round += 1;
         }
         
@@ -120,7 +161,7 @@ class WorldLogic {
 
             // Determine skill to cast and execute associated logic
             if (e.buttons === 1 && currentSkill === 1 && ui.mana >= 1) {
-                const ballGeometry = new THREE.SphereGeometry(0.2, 64, 64);1
+                const ballGeometry = new THREE.SphereGeometry(0.2, 64, 64);
                 const ballMaterial = new THREE.MeshToonMaterial({map: skillOneTexture});
                 const ball = new THREE.Mesh(ballGeometry, ballMaterial);
                 ball.position.x = objects.box6.position.x;
@@ -314,6 +355,9 @@ class WorldLogic {
             
             // Game over logic - reset all objects and display end game graph
             if (ui.health <= 0) {
+                if (selectedEnemyMesh) {
+                    scene.remove(selectedEnemyMesh)
+                }
                 shotObjects.forEach(object => scene.remove(object));
                 enemies.forEach(enemy => scene.remove(enemy));
                 enemies = [];

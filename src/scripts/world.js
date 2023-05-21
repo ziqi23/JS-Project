@@ -137,16 +137,16 @@ class World {
                 camera.position.y += -0.05;
             } else if (down === 2 && e.screenX > oldXPos) {
                 // camera should go left
-                xTracker += 0.01;
-                zTracker += 0.01;
-                camera.position.x += Math.cos(xTracker) * radius * -0.01;
-                camera.position.z += Math.sin(zTracker) * radius * -0.01;
+                xTracker += 0.05;
+                zTracker += 0.05;
+                camera.position.x += Math.cos(xTracker) * radius * -0.05;
+                camera.position.z += Math.sin(zTracker) * radius * -0.05;
             } else if (down === 2 && e.screenX < oldXPos) {
                 // camera should go right
-                xTracker -= 0.01;
-                zTracker -= 0.01;
-                camera.position.x += Math.cos(xTracker) * radius * 0.01;
-                camera.position.z += Math.sin(zTracker) * radius * 0.01;
+                xTracker -= 0.05;
+                zTracker -= 0.05;
+                camera.position.x += Math.cos(xTracker) * radius * 0.05;
+                camera.position.z += Math.sin(zTracker) * radius * 0.05;
             }        
             oldXPos = e.screenX;
             oldYPos = e.screenY;

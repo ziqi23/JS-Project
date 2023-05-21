@@ -97,7 +97,7 @@ class Ui {
         
     }
     
-    // Function that is run at every fram to update UI based on current player health, exp, etc.
+    // Function that is run at every frame to update UI based on current player health, exp, etc.
     buildUi() {
 
         // Update HP potion count display
