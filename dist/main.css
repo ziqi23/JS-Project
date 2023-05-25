@@ -335,3 +335,8 @@ body {
   top: 20vh;
   left: 23vw;
 }
+
+#enemy-banner {
+  position: absolute;
+  z-index: 100;
+}

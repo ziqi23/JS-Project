@@ -14,7 +14,6 @@ class WorldLogic {
     
     // Main function to initiate all game logic
     run() {
-        
         // Assign variables to be handled by logic below.
         let worldObjects = this.worldObjects;
         let scene = this.scene;
@@ -35,7 +34,8 @@ class WorldLogic {
             cylinder3: undefined, 
             cylinder4: undefined, 
             cylinder5: undefined, 
-            box6: undefined, 
+            player: undefined,
+            enemySpaceship: undefined 
         };
         
         scene.children.forEach((child) => {
@@ -74,19 +74,18 @@ class WorldLogic {
                 selectedEnemyIdx += 1
             }
             const boundingBox = new THREE.Box3().setFromObject(selectedEnemy);
-            const selectedEnemyGeometry = new THREE.CircleGeometry(5, 32);
-            const selectedEnemyMaterial = new THREE.MeshStandardMaterial({color: 0xFFFFFF});
-            selectedEnemyMaterial.side = THREE.DoubleSide;
+            const selectedEnemyGeometry = new THREE.RingGeometry(5, 6, 8);
+            const selectedEnemyMaterial = new THREE.MeshStandardMaterial({color: 0xFFFFFF, side: THREE.DoubleSide});
 
             selectedEnemyMesh = new THREE.Mesh(selectedEnemyGeometry, selectedEnemyMaterial);
-            selectedEnemyMesh.rotation.x = Math.PI / 4
-            selectedEnemyMesh.position.x = (boundingBox.max.x + boundingBox.min.x) / 2
-            selectedEnemyMesh.position.y = 10;
-            selectedEnemyMesh.position.z = (boundingBox.max.z + boundingBox.min.z) / 2
+            selectedEnemyMesh.rotation.x = Math.PI / 2;
+            selectedEnemyMesh.position.x = (boundingBox.max.x + boundingBox.min.x) / 2;
+            selectedEnemyMesh.position.y = 0.1;
+            selectedEnemyMesh.position.z = (boundingBox.max.z + boundingBox.min.z) / 2;
             scene.add(selectedEnemyMesh)
         }
 
-        // gameStart() called when after tutorial, enemy spawn logic
+        // Define enemy spawn logic
         let round = 1;
         let enemies = [];
         let score = 0;
@@ -94,7 +93,6 @@ class WorldLogic {
         const enemyAttackTexture = new THREE.TextureLoader().load('./assets/enemy-proj.png');
 
         async function gameStart() {
-            // Create enemies in a for loop
             selectedEnemyIdx = 0;
             for (let i = 0; i < 5 + 2 * (round - 1); i++) {
                 const loader = new OBJLoader();
@@ -106,6 +104,7 @@ class WorldLogic {
                     obj.scale.z = 0.08;
                     obj.position.x = (Math.random() - 0.5) * 70;
                     obj.position.z = Math.random() * -100 - 25;
+                    obj.name = "enemy"
                     // Each enemy has an internal timer to space attacks between
                     obj.clock = new THREE.Clock();
                     scene.add(obj);
@@ -115,7 +114,7 @@ class WorldLogic {
             }
 
             function sortEnemies(a, b) {
-                const playerLocation = objects.box6.position;
+                const playerLocation = objects.player.position;
                 const distanceFromA = Math.sqrt((a.position.x - playerLocation.x) ** 2 + 
                 (a.position.y - playerLocation.y) ** 2 + 
                 (a.position.z - playerLocation.z) ** 2)
@@ -129,7 +128,6 @@ class WorldLogic {
 
             round += 1;
         }
-        
 
         // Utilize three.js raycaster to determine the coordinates at which cursor is pointed to
         const raycaster = new THREE.Raycaster();
@@ -151,22 +149,20 @@ class WorldLogic {
             }
         }
 
-        // Listen for click (and specifically not a drag / camera angle adjustment)
-        // Use pointingTo to determine the direction to fire object
+        // Listen for click and use pointingTo to determine the direction to fire object
         document.addEventListener("mousedown", handleShoot)
         let shotObjects = [];
         const skillOneTexture = new THREE.TextureLoader().load('./assets/energy-orb2.png');
         
         function handleShoot(e) {
-
             // Determine skill to cast and execute associated logic
             if (e.buttons === 1 && currentSkill === 1 && ui.mana >= 1) {
                 const ballGeometry = new THREE.SphereGeometry(0.2, 64, 64);
                 const ballMaterial = new THREE.MeshToonMaterial({map: skillOneTexture});
                 const ball = new THREE.Mesh(ballGeometry, ballMaterial);
-                ball.position.x = objects.box6.position.x;
-                ball.position.z = objects.box6.position.z;
-                ball.position.y = objects.box6.position.y;
+                ball.position.x = objects.player.position.x;
+                ball.position.z = objects.player.position.z;
+                ball.position.y = objects.player.position.y;
                 ball.name = "ball";
                 let audio = new Audio("./assets/laser-gun-shot.wav");
                 audio.play();
@@ -203,9 +199,9 @@ class WorldLogic {
             // Move player projectiles in their PointingTo position. Remove projectiles too far out
             shotObjects.forEach((ballArray) => {
                 if (ballArray[0].name === "ball") {
-                    let distance = Math.sqrt((objects.box6.position.x - ballArray[1]) ** 2 + (objects.box6.position.z - ballArray[2]) ** 2);
-                    ballArray[0].position.x += -(objects.box6.position.x - ballArray[1]) / distance;
-                    ballArray[0].position.z += -(objects.box6.position.z - ballArray[2]) / distance;
+                    let distance = Math.sqrt((objects.player.position.x - ballArray[1]) ** 2 + (objects.player.position.z - ballArray[2]) ** 2);
+                    ballArray[0].position.x += -(objects.player.position.x - ballArray[1]) / distance;
+                    ballArray[0].position.z += -(objects.player.position.z - ballArray[2]) / distance;
                     if (Math.sqrt(ballArray[0].position.x ** 2 + ballArray[0].position.z ** 2) > 200) {
                         scene.remove(ballArray[0]);
                     }
@@ -217,8 +213,8 @@ class WorldLogic {
             // Find objects in the scene and handle collision
             shotObjects.forEach((object) => {
                 scene.children.forEach((object2) => {
-                    if (object[0].uuid !== object2.uuid && that.worldObjects.objectsBoundingBox[object2.uuid] && object2.name !== "plane" && object2.name !== "sky" && object2.name !== "box6" && object2.name !== "enemyAttack") {
-                        if (that.worldObjects.objectsBoundingBox[object[0].uuid] && that.worldObjects.objectsBoundingBox[object[0].uuid].intersectsBox(that.worldObjects.objectsBoundingBox[object2.uuid])) { 
+                    if (object[0].uuid !== object2.uuid && that.worldObjects.objectsBoundingBox[object2.uuid] && (object2.name.includes("cylinder") || object2.name === "enemy")) {
+                        if (that.worldObjects.objectsBoundingBox[object[0].uuid]?.intersectsBox(that.worldObjects.objectsBoundingBox[object2.uuid])) { 
                             let audio = new Audio("./assets/enemy-hit.mp3");
                             audio.play();
                             object2.collided = true;
@@ -228,6 +224,17 @@ class WorldLogic {
                 })
             })
             
+            // Show enemy banner if selected
+            if (selectedEnemy && !document.getElementById('enemy-banner')) {
+                const banner = document.createElement('div');
+                banner.id = 'enemy-banner';
+                document.getElementById('body').appendChild(banner);
+                banner.innerHTML = selectedEnemy.name
+            }
+            else if (!selectedEnemy) {
+                document.getElementById('enemy-banner')?.remove();
+            }
+
             // Game start condition
             if (objects.cylinder2.collided === true) {
                 scene.remove(objects.cylinder2);
@@ -260,6 +267,12 @@ class WorldLogic {
                     ui.exp += 3;
                     score += 500;
                     document.getElementById("score").innerHTML = `Score: ${score}`;
+                    if (enemies.indexOf(enemy) === selectedEnemyIdx - 1) {
+                        selectedEnemyIdx = 0;
+                        selectedEnemy = null;
+                        scene.remove(selectedEnemyMesh)
+                        selectedEnemyMesh = null;
+                    }
                     enemies.splice(enemies.indexOf(enemy), 1);
                 } else {
                     if (enemy.clock.getElapsedTime() > 1) {
@@ -290,18 +303,18 @@ class WorldLogic {
             enemyAttacks.forEach((beam) => {
                 beam.position.x -= beam.rotation.x * 0.5;
                 beam.position.z -= beam.rotation.z;
-                if (that.worldObjects.objectsBoundingBox[beam.uuid] && that.worldObjects.objectsBoundingBox[beam.uuid].intersectsBox(that.worldObjects.objectsBoundingBox[objects.box6.uuid])) {
-                    objects.box6.collided = true;
+                if (that.worldObjects.objectsBoundingBox[beam.uuid] && that.worldObjects.objectsBoundingBox[beam.uuid].intersectsBox(that.worldObjects.objectsBoundingBox[objects.player.uuid])) {
+                    objects.player.collided = true;
                 }
                 // Remove enemy attacks too far out
-                let distance = Math.sqrt((beam.position.x - objects.box6.position.x) ** 2 + (beam.position.z - objects.box6.position.z) ** 2);
+                let distance = Math.sqrt((beam.position.x - objects.player.position.x) ** 2 + (beam.position.z - objects.player.position.z) ** 2);
                 if (distance > 300) {
                     scene.remove(beam);
                 }
             })
 
             // Handle player hit by enemy projectile, one second timeout between hits registering
-            if (objects.box6.collided === true && playerHitClock.getElapsedTime() > 1) {
+            if (objects.player.collided === true && playerHitClock.getElapsedTime() > 1) {
                 if (!popUp) {
                     let audio = new Audio("./assets/player-hit.mp3");
                     audio.play();
@@ -330,12 +343,12 @@ class WorldLogic {
                 popUp = undefined;
             }
 
-            objects.box6.collided = false;
+            objects.player.collided = false;
 
             // Call Ui#BuildUi to render most updated player attributes
             ui.buildUi();
             
-            // Simulate collision by stopping objects when y-coordinate coincides with ground plane
+            // Simulate gravity by stopping objects when y-coordinate coincides with ground plane
             if (objects.cylinder2.position.y - 1.5 > plane.position.y) {
                 objects.cylinder2.position.y += -0.05;
                 objects.cylinder3.position.y += -0.05;
@@ -343,12 +356,12 @@ class WorldLogic {
                 objects.cylinder5.position.y += -0.05;
             }
 
-            if (objects.box6.position.y - 1.5 > plane.position.y) {
-                objects.box6.position.y += -0.05;
+            if (objects.player.position.y - 1.5 > plane.position.y) {
+                objects.player.position.y += -0.05;
             }
             
-            // Camera always looks at center piece
-            camera.lookAt(objects.box6.position);
+            // Camera always follows player
+            camera.lookAt(objects.player.position);
 
             // Render everything above
             renderer.render(scene, camera);
@@ -356,15 +369,18 @@ class WorldLogic {
             // Game over logic - reset all objects and display end game graph
             if (ui.health <= 0) {
                 if (selectedEnemyMesh) {
-                    scene.remove(selectedEnemyMesh)
+                    selectedEnemy = null;
+                    selectedEnemyIdx = 0;
+                    scene.remove(selectedEnemyMesh);
+                    selectedEnemyMesh = null;
                 }
                 shotObjects.forEach(object => scene.remove(object));
                 enemies.forEach(enemy => scene.remove(enemy));
                 enemies = [];
                 enemyAttacks.forEach(attack => scene.remove(attack));
-                objects.box6.position.x = 0;
-                objects.box6.position.y = 1.5;
-                objects.box6.position.z = 0;
+                objects.player.position.x = 0;
+                objects.player.position.y = 1.5;
+                objects.player.position.z = 0;
                 ui.health = 100;
                 ui.mana = 100;
                 ui.potions = 3;
@@ -374,13 +390,10 @@ class WorldLogic {
                 scene.add(objects.cylinder3);
                 scene.add(objects.cylinder4);
                 scene.add(objects.cylinder5);
-                camera.position.set(0, 10, 30);
+                camera.position.set(0, 20, 50);
 
                 let gameOver = document.getElementById("endgame-stats");
                 gameOver.style.visibility = "visible";
-
-                let graph = document.getElementById("endgame-graph");
-
                 let score = shotCount? Math.floor(hitCount ** 2 / shotCount * playTimeClock.getElapsedTime()) : 0;
                 let rating;
                 switch (true) {
@@ -409,7 +422,6 @@ class WorldLogic {
                 Press 'enter' to play again!`
             }
         }
-
         update();
     }
 }

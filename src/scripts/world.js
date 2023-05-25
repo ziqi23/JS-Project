@@ -1,7 +1,8 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
+import { TextureLoader } from 'three';
 class World {
     constructor() {
 
@@ -28,7 +29,7 @@ class World {
         scene.add(light2);
         
         // Initialize 500x500 ground at y = 0
-        const rockTexture = new THREE.TextureLoader().load('./assets/rocktexture.jpg');
+        const rockTexture = new THREE.TextureLoader().load('./assets/moon-texture.jpeg');
         const geometry = new THREE.BoxGeometry(500, 500, 0);
         const material = new THREE.MeshStandardMaterial({map: rockTexture});
         const plane = new THREE.Mesh(geometry, material);
@@ -40,15 +41,24 @@ class World {
         // Initialize base
         const gltfLoader = new GLTFLoader();
         gltfLoader.load('./assets/ISS_stationary.glb', function(gltf) {
-            gltf.scene.position.x = 30;
+            gltf.scene.position.x = 45;
             gltf.scene.position.y = 10;
-            gltf.scene.position.z = 40;
+            gltf.scene.position.z = 80;
             gltf.scene.rotation.z = Math.PI;
             gltf.scene.rotation.y = Math.PI / 4;
             scene.add(gltf.scene);
         })
+        const beamTexture = new THREE.TextureLoader().load('./assets/globetexture.png');
+        const beamGeometry = new THREE.SphereGeometry(3, 32, 32);
+        const beamMaterial = new THREE.MeshStandardMaterial({map: beamTexture});
+        const beam = new THREE.Mesh(beamGeometry, beamMaterial);
+        beam.position.x = 23;
+        beam.position.y = 10;
+        beam.position.z = 56;
+        scene.add(beam)
 
-        // Initialize background
+
+        // Initialize globe background
         const globeTexture = new THREE.TextureLoader().load('./assets/globetexture.png');
         const bgGeometry = new THREE.SphereGeometry(200, 64, 64);
         const bgMaterial = new THREE.MeshStandardMaterial({map: globeTexture});
@@ -87,6 +97,10 @@ class World {
             scene.add(obj);
         })
 
+        // Initialize static scene background
+        const texture = new THREE.TextureLoader().load('./assets/space-background.jpg')
+        scene.background = texture;  
+
         // Load smaller rocks at random locations
         for(let i = 0; i < 20; i++) {
             loader.load("./assets/rock1.obj", function(obj) {
@@ -112,44 +126,16 @@ class World {
         // Create dummy object at (0, 0, 0), set camera location and point to dummy object
         const pivot = new THREE.Object3D();
         scene.add(pivot);
-        camera.position.set(0, 10, 30);
+        camera.position.set(0, 20, 50);
         camera.lookAt(pivot.position);
 
-        // Set listener to adjust camera angle - Allow mouse dragging x and y directions
-        let down;
-        window.addEventListener('mousedown', (e) => down = e.buttons)
-        window.addEventListener('mouseup', (e) => down = 0)
-        window.addEventListener('mousemove', handleMouseMove)
-        window.addEventListener("contextmenu", (e) => { e.preventDefault() })
-
-        // Handle camera movement upon right mouse click and drag
-        let oldXPos = 0;
-        let oldYPos = 0;
-        let xTracker = 0;
-        let zTracker = 0;
-        function handleMouseMove(e) {  
-            let radius = Math.sqrt(camera.position.x ** 2 + camera.position.z ** 2);
-            if (down === 2 && e.screenY > oldYPos && camera.position.y < 15) {
-                // camera should go up
-                camera.position.y += 0.05;
-            } else if (down === 2 && e.screenY < oldYPos && camera.position.y > 5) {
-                // camera should go down
-                camera.position.y += -0.05;
-            } else if (down === 2 && e.screenX > oldXPos) {
-                // camera should go left
-                xTracker += 0.05;
-                zTracker += 0.05;
-                camera.position.x += Math.cos(xTracker) * radius * -0.05;
-                camera.position.z += Math.sin(zTracker) * radius * -0.05;
-            } else if (down === 2 && e.screenX < oldXPos) {
-                // camera should go right
-                xTracker -= 0.05;
-                zTracker -= 0.05;
-                camera.position.x += Math.cos(xTracker) * radius * 0.05;
-                camera.position.z += Math.sin(zTracker) * radius * 0.05;
-            }        
-            oldXPos = e.screenX;
-            oldYPos = e.screenY;
+        // Add handler for window resize
+        window.addEventListener('resize', handleResize) 
+        
+        function handleResize(e) {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize( window.innerWidth, window.innerHeight );
         }
 
         // Render everything above
@@ -158,11 +144,20 @@ class World {
         renderer.render(scene, camera);
         document.body.appendChild(renderer.domElement);
 
+        // Set camera rotation properties
+        const controls = new OrbitControls( camera, renderer.domElement );
+        controls.rotateSpeed = 3;
+        controls.enablePan = false;
+        controls.enableDamping = true;
+        controls.mouseButtons.RIGHT = THREE.MOUSE.ROTATE;
+        controls.mouseButtons.LEFT = THREE.MOUSE.PAN;
+
         // Pass objects to other classes
         this.scene = scene;
         this.camera = camera;
-        this.renderer = renderer
+        this.renderer = renderer;
         this.plane = plane;
+        this.controls = controls;
     }
 }
 
