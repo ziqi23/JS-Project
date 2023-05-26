@@ -28,7 +28,7 @@ export function load() {
         const loadingAnimation = document.getElementById('loading-animation')
         if (loadingAnimation) loadingPage.removeChild(loadingAnimation)
         const instructions = document.createElement('IMG')
-        instructions.src = './assets/instructions-v2.png'
+        instructions.src = './assets/Instructions-v2.png'
         instructions.style.width = '720px';
         instructions.style.height = '560px';
         loadingPage.appendChild(instructions)
