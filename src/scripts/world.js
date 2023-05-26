@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { TextureLoader } from 'three';
 class World {
     constructor() {
 
@@ -48,13 +47,14 @@ class World {
             gltf.scene.rotation.y = Math.PI / 4;
             scene.add(gltf.scene);
         })
-        const beamTexture = new THREE.TextureLoader().load('./assets/globetexture.png');
+        const beamTexture = new THREE.TextureLoader().load('./assets/cannon.jpeg');
         const beamGeometry = new THREE.SphereGeometry(3, 32, 32);
         const beamMaterial = new THREE.MeshStandardMaterial({map: beamTexture});
         const beam = new THREE.Mesh(beamGeometry, beamMaterial);
         beam.position.x = 23;
         beam.position.y = 10;
         beam.position.z = 56;
+        beam.name = 'cannonAttack'
         scene.add(beam)
 
 
@@ -126,7 +126,7 @@ class World {
         // Create dummy object at (0, 0, 0), set camera location and point to dummy object
         const pivot = new THREE.Object3D();
         scene.add(pivot);
-        camera.position.set(0, 20, 50);
+        camera.position.set(0, 10, 50);
         camera.lookAt(pivot.position);
 
         // Add handler for window resize

@@ -55,12 +55,15 @@ class WorldObjects {
         // Construct Cylinder 1
         const loader = new OBJLoader();
         const rockTexture = new THREE.TextureLoader().load('./assets/rocktexture.jpg');
-        await loader.load("./assets/startRock.obj", function(obj) {
-            obj.scale.x = 0.13;
-            obj.scale.y = 0.13;
-            obj.scale.z = 0.13;
-            obj.position.x = -8;
-            obj.position.z = -8;
+        await loader.load("./assets/asteroid.obj", function(obj) {
+            obj.scale.x = 15;
+            obj.scale.y = 15;
+            obj.scale.z = 15;
+            obj.position.x = (Math.random() * 100) - 50;
+            obj.position.y = 30;
+            obj.position.z = -((Math.random() * 100) + 50);
+            obj.rotation.z = Math.random() * Math.PI;
+            obj.direction = {x: Math.random() - 0.5, z: Math.random() - 0.5}
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder2";
             that.scene.add(obj);
@@ -68,12 +71,15 @@ class WorldObjects {
         })
 
         // Construct Cylinder 2
-        await loader.load("./assets/startRock.obj", function(obj) {
-            obj.scale.x = 0.13;
-            obj.scale.y = 0.13;
-            obj.scale.z = 0.13;
-            obj.position.x = -8;
-            obj.position.z = 8;
+        await loader.load("./assets/asteroid.obj", function(obj) {
+            obj.scale.x = 15;
+            obj.scale.y = 15;
+            obj.scale.z = 15;
+            obj.position.x = (Math.random() * 100) - 50;
+            obj.position.y = 30;
+            obj.position.z = -((Math.random() * 100) + 50);
+            obj.rotation.z = Math.random() * Math.PI;
+            obj.direction = {x: Math.random() - 0.5, z: Math.random() - 0.5}
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder3";
             that.scene.add(obj);
@@ -81,12 +87,15 @@ class WorldObjects {
         })
 
         // Construct Cylinder 3
-        await loader.load("./assets/startRock.obj", function(obj) {
-            obj.scale.x = 0.13;
-            obj.scale.y = 0.13;
-            obj.scale.z = 0.13;
-            obj.position.x = 8;
-            obj.position.z = 8;
+        await loader.load("./assets/asteroid.obj", function(obj) {
+            obj.scale.x = 15;
+            obj.scale.y = 15;
+            obj.scale.z = 15;
+            obj.position.x = (Math.random() * 100) - 50;
+            obj.position.y = 30;
+            obj.position.z = -((Math.random() * 100) + 50);
+            obj.rotation.z = Math.random() * Math.PI;
+            obj.direction = {x: Math.random() - 0.5, z: Math.random() - 0.5}
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder4";
             that.scene.add(obj);
@@ -94,12 +103,15 @@ class WorldObjects {
         })
         
         // Construct Cylinder 4
-        await loader.load("./assets/startRock.obj", function(obj) {
-            obj.scale.x = 0.13;
-            obj.scale.y = 0.13;
-            obj.scale.z = 0.13;
-            obj.position.x = 8;
-            obj.position.z = -8;
+        await loader.load("./assets/asteroid.obj", function(obj) {
+            obj.scale.x = 15;
+            obj.scale.y = 15;
+            obj.scale.z = 15;
+            obj.position.x = (Math.random() * 100) - 50;
+            obj.position.y = 30;
+            obj.position.z = -((Math.random() * 100) + 50);
+            obj.rotation.z = Math.random() * Math.PI;
+            obj.direction = {x: Math.random() - 0.5, z: Math.random() - 0.5}
             obj.children[0].material = new THREE.MeshStandardMaterial({map: rockTexture});
             obj.name = "cylinder5";
             that.scene.add(obj);
@@ -107,18 +119,19 @@ class WorldObjects {
         })
 
         await loader.load("./assets/enemy-spaceship.obj", function(obj) {
-            obj.scale.x = 5;
-            obj.scale.y = 5;
-            obj.scale.z = 5;
+            obj.scale.x = 12;
+            obj.scale.y = 12;
+            obj.scale.z = 12;
             obj.rotation.x = Math.PI / 16;
             obj.position.y = 20;
-            obj.position.z = -100;
+            obj.position.z = -250;
             const texture = new THREE.TextureLoader().load('./assets/dark-metal-grid-1.jpg');
             obj.material = new THREE.MeshStandardMaterial({map: texture});
             obj.children.forEach(child => {
                 child.material = new THREE.MeshStandardMaterial({map: texture});
             })
             obj.name = 'enemySpaceship'
+            obj.health = 10;
             obj.clock = new THREE.Clock();
             that.scene.add(obj);
             load()
@@ -150,6 +163,10 @@ class WorldObjects {
             }
             if (object.name === "enemySpaceship") {
                 enemySpaceship = object;
+                this.objectsBoundingBox[object.uuid] = new THREE.Box3().setFromObject(object);
+            }
+            if (object.name === "cannonAttack") {
+                this.objectsBoundingBox[object.uuid] = new THREE.Box3().setFromObject(object);
             }
             if (object.geometry || object.clock || object.name.includes("cylinder") || object.name === "player") {
                 this.objectsBoundingBox[object.uuid] = new THREE.Box3().setFromObject(object);

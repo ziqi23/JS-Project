@@ -3,6 +3,19 @@ import WorldObjects from './scripts/worldObjects.js';
 import WorldLogic from './scripts/worldLogic.js';
 import Ui from './scripts/ui.js';
 
+let muted = false;
+document.addEventListener('keydown', handleMute)
+function handleMute(e) {
+    if (e.code === "KeyM") {
+        muted = !muted;
+    }
+    if (muted) {
+        document.getElementById('background-music').muted = true;
+    } else {
+        document.getElementById('background-music').muted = false;
+    }
+}
+
 let world = new World();
 let objects = new WorldObjects(world);
 let ui = new Ui()
@@ -16,11 +29,12 @@ export async function load() {
         const loadingPage = document.getElementById('loading-page')
         const loadingAnimation = document.getElementById('loading-animation')
         loadingPage.removeChild(loadingAnimation)
-        const enterButton = document.createElement('div')
-        enterButton.id = 'enter-button'
-        enterButton.innerHTML = 'Enter Game'
-        loadingPage.appendChild(enterButton)
-        enterButton.addEventListener('click', handleEnterGame)
+        const instructions = document.createElement('IMG')
+        instructions.src = './assets/instructions-v2.png'
+        instructions.style.width = '720px';
+        instructions.style.height = '560px';
+        loadingPage.appendChild(instructions)
+        loadingPage.addEventListener('click', handleEnterGame)
         function handleEnterGame(e) {
             e.preventDefault()
             document.getElementById('body').removeChild(loadingPage)
@@ -31,6 +45,7 @@ export async function load() {
 }
 
 export function start() {
-    let logic = new WorldLogic(world, objects, ui);
+    let logic = new WorldLogic(world, objects, ui, muted);
     logic.run();
 }
+

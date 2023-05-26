@@ -7,6 +7,7 @@ class Ui {
         this.level = 1;
         this.potions = 3;
         this.manaPotions = 3;
+        this.enemyHealth = 10;
 
         // Fetch menu background image & border
         let backgroundImage = document.createElement("img");
@@ -30,9 +31,10 @@ class Ui {
         text.innerHTML = "Use WASD to control your airship movement. <br><br>\
                     Move your mouse to aim and left-click to fire. <br><br>\
                     Switch between attack modes using the numbers 1 & 2. <br>\
-                    Use Q and E to drink potions. They will restore your HP and MP to full. <br>\
+                    Use Q and E to drink potions. <br>\
                     Hold right click to adjust camera angles. <br><br>\
-                    Once you're familiar with the basics, hit the four pillars to get started. <br>\
+                    Press Tab to target a specific enemy. <br><br>\
+                    Press M to mute or unmute. <br><br>\
                     Press P to toggle this menu on and off.";
         text.style.width = '50vw';
         text.style.height = '30vh';
@@ -144,6 +146,11 @@ class Ui {
         // Update exp bar based on current exp
         let el = document.getElementById("dup-exp-bar")
         el.style.width = `${this.exp}vw`
+
+        // Update enemy health visual
+        const enemyHealth = document.getElementById("enemy-health-full")
+        enemyHealth.style.width = `${this.enemyHealth / 10 * 70}vw`
+        
 
         // Update user level
         if (this.exp >= 100) {

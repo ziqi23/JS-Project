@@ -123,25 +123,25 @@ a {
 img {
     width: inherit;
     height: inherit;
-    object-fit: contain;
+    object-fit: contain
 }
 
+
+
 canvas {
-    margin: -10px;
-    border: 1px solid black;
     position: absolute;
     z-index: 10;
 }
 
 #ui {
     display: flex;
+    width: 100vw;
+    min-width: 1100px;
     position: relative;
-    /* width: 90vw; */
     justify-content: space-between;
     font-size: 20px;
     font-weight: bold;
     bottom: -6vh;
-    /* left: 44vw; */
     z-index: 20;
 }
 
@@ -151,8 +151,12 @@ canvas {
     position: absolute;
     left: 123px;
     top: 8px;
-    border: 2px solid gold;
+    border: 3px solid gold;
     z-index: 30;
+}
+
+#skill-one img, #skill-two img {
+    object-fit: fill;
 }
 
 #skill-two {
@@ -161,26 +165,26 @@ canvas {
     position: absolute;
     left: 181px;
     top: 8px;
-    border: 2px solid black;
+    border: 3px solid black;
     z-index: 30;
 }
 
 #health {
     position: absolute;
-    left: 0;
-    top: 80vh;
+    left: 0.5vw;
+    top: 79vh;
     width: 520px;
-    height: 200px;
+    height: 140px;
+    z-index: 20;
 }
 
 #mana {
     position: absolute;
-    right: 0;
-    top: 80vh;
-    display: flex;
-    /* align-items: first baseline; */
+    right: 1vw;
+    top: 79vh;
     width: 520px;
-    height: 200px;
+    height: 140px;
+    z-index: 20;
 }
 
 #health div, #mana div {
@@ -189,19 +193,19 @@ canvas {
 
 #hp-border {
     position: absolute;
-    bottom: 6vh;
+    bottom: 2vh;
 }
 
 #mp-border {
     position: absolute;
-    bottom: 6vh;
-    right: -1vw;
+    bottom: 1vh;
+    right: -0.6vw;
 }
 
 #hp-orb, #hp-shadow, #hp-highlight {
     position: absolute;
-    bottom: 7vh;
-    left: 0.8vw;
+    bottom: 3.2vh;
+    left: 0.5vw;
 }
 
 #hp-orb {
@@ -239,8 +243,8 @@ canvas {
 
 #mp-orb, #mp-shadow, #mp-highlight {
     position: absolute;
-    bottom: 7vh;
-    right: -0.2vw;
+    bottom: 2.4vh;
+    right: 0.2vw;
 }
 
 body {
@@ -248,10 +252,12 @@ body {
 }
 
 #red {
+    border-radius: 15px;
+    overflow: hidden;
     position: absolute;
     top: 15px;
     left: 280px;
-    width: 100px;
+    width: 80px;
     height: 100px;
     z-index: 40;
     opacity: 80%;
@@ -259,10 +265,12 @@ body {
 }
 
 #blue {
+    border-radius: 15px;
+    overflow: hidden;
     position: absolute;
     top: 15px;
     left: 400px;
-    width: 100px;
+    width: 80px;
     height: 100px;
     z-index: 40;
     opacity: 80%;
@@ -270,38 +278,76 @@ body {
 }
 
 #potion-count {
-    font-family: cursive;
-    top: 78vh;
-    left: 260px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-style: italic;
+    color: rgb(189, 189, 189);
+    top: 82vh;
+    left: 270px;
 }
 
 #mp-potion-count {
-    font-family: cursive;
-    top: 78vh;
-    left: 380px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-style: italic;
+    color: rgb(189, 189, 189);
+    top: 82vh;
+    left: 390px;
+}
+
+#menu {
+    position: absolute;
+    left: 250px;
+    top: 79vh;
+    width: calc(100vw - 500px);
+    height: 130px;
+    z-index: 10;
+}
+
+#menu img {
+    object-fit: cover;
+}
+
+#task {
+    position: absolute;
+    left: 40vw;
+    top: 80vh;
+    z-index: 25;
+}
+#task h1 {
+    font-size: 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-style: italic;
+    color: rgb(189, 189, 189);
+    margin-bottom: 20px;
+}
+#task h2 {
+    width: 300px;
+    font-size: 14px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-style: italic;
+    color: rgb(189, 189, 189);
 }
 
 #exp {
     position: absolute;
-    top: 91.5vh;
+    top: 92vh;
     width: 100vw;
-    height: 15px;
+    height: 20px;
+    z-index: 30;
 }
 
 #exp-bar {
-    margin-left: -6px;
     object-fit: fill;
     filter: grayscale(100%);
+    z-index: 30;
 }
 
 #dup-exp-bar {
     position: absolute;
     left: 2px;
-    top: 3px;
-    margin-left: -6px;
+    top: 0px;
     object-fit: cover;
-    width: 0vw; 
-    filter: hue-rotate(170deg)
+    filter: hue-rotate(170deg);
+    z-index: 30;
 }
 
 #endgame-stats {
@@ -332,4 +378,42 @@ body {
 #enemy-banner {
     position: absolute;
     z-index: 100;
+    top: 50px;
+    left: 40%;
+    font-size: 26px;
+    background-color: brown;
+}
+
+#enemy-health-empty {
+    background-color: black;
+    position: absolute;
+    z-index: 40;
+    bottom: -40px;
+    left: 15vw;
+    width: 70vw;
+    height: 40px;
+}
+
+#enemy-health-empty img {
+    position: absolute;
+    z-index: 40;
+    border-radius: 1px;
+    object-fit: cover;
+}
+
+#enemy-health-full {
+    background-color: black;
+    position: absolute;
+    z-index: 40;
+    bottom: -40px;
+    left: 15vw;
+    width: 70vw;
+    height: 40px;
+}
+
+#enemy-health-full img {
+    position: absolute;
+    z-index: 40;
+    border-radius: 1px;
+    object-fit: cover;
 }

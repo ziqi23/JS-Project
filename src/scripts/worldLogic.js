@@ -1,15 +1,16 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-
+import delay from 'delay';
 
 class WorldLogic {
-    constructor(world, worldObjects, ui) {
+    constructor(world, worldObjects, ui, muted) {
         this.scene = world.scene;
         this.camera = world.camera;
         this.renderer = world.renderer;
         this.plane = world.plane;
         this.worldObjects = worldObjects;
         this.ui = ui;
+        this.muted = muted;
     }
     
     // Main function to initiate all game logic
@@ -21,6 +22,7 @@ class WorldLogic {
         let camera = this.camera;
         let renderer = this.renderer;
         let ui = this.ui;
+        let muted = this.muted;
         let shotCount = 0;
         let hitCount = 0;
         let enemyAttacks = [];
@@ -35,9 +37,22 @@ class WorldLogic {
             cylinder4: undefined, 
             cylinder5: undefined, 
             player: undefined,
-            enemySpaceship: undefined 
+            enemySpaceship: undefined,
+            cannonAttack: undefined
         };
-        
+
+        document.addEventListener('keydown', handleMute)
+        function handleMute(e) {
+            if (e.code === "KeyM") {
+                muted = !muted;
+            }
+            if (muted) {
+                document.getElementById('background-music').muted = true;
+            } else {
+                document.getElementById('background-music').muted = false;
+            }
+        }
+
         scene.children.forEach((child) => {
             if (Object.keys(objects).includes(child.name)) {
                 objects[child.name] = child;
@@ -60,7 +75,7 @@ class WorldLogic {
         }
 
         // Handle 'tab' to select enemies
-        let selectedEnemyIdx = 0;
+        let selectedEnemyIdx = -1;
         let selectedEnemy;
         let selectedEnemyMesh;
         window.addEventListener('keydown', handleTab)
@@ -70,8 +85,8 @@ class WorldLogic {
                 scene.remove(selectedEnemyMesh)
             }
             if (e.key === 'Tab') {
-                selectedEnemy = enemies[selectedEnemyIdx % enemies.length]
                 selectedEnemyIdx += 1
+                selectedEnemy = enemies[selectedEnemyIdx % enemies.length]
             }
             const boundingBox = new THREE.Box3().setFromObject(selectedEnemy);
             const selectedEnemyGeometry = new THREE.RingGeometry(5, 6, 8);
@@ -88,7 +103,6 @@ class WorldLogic {
         // Define enemy spawn logic
         let round = 1;
         let enemies = [];
-        let score = 0;
         const metalTexture = new THREE.TextureLoader().load('./assets/metal.jpeg');
         const enemyAttackTexture = new THREE.TextureLoader().load('./assets/enemy-proj.png');
 
@@ -165,7 +179,7 @@ class WorldLogic {
                 ball.position.y = objects.player.position.y;
                 ball.name = "ball";
                 let audio = new Audio("./assets/laser-gun-shot.wav");
-                audio.play();
+                if (!muted) audio.play();
                 scene.add(ball);
                 shotCount += 1;
                 ui.mana -= 1;
@@ -180,7 +194,7 @@ class WorldLogic {
                 cone.position.z = pointingTo.z;
                 cone.name = "thunder";
                 let audio = new Audio("./assets/shock-spell.mp3");
-                audio.play();
+                if (!muted) audio.play();
                 scene.add(cone);
                 shotCount += 1;
                 ui.mana -= 3;
@@ -216,14 +230,13 @@ class WorldLogic {
                     if (object[0].uuid !== object2.uuid && that.worldObjects.objectsBoundingBox[object2.uuid] && (object2.name.includes("cylinder") || object2.name === "enemy")) {
                         if (that.worldObjects.objectsBoundingBox[object[0].uuid]?.intersectsBox(that.worldObjects.objectsBoundingBox[object2.uuid])) { 
                             let audio = new Audio("./assets/enemy-hit.mp3");
-                            audio.play();
+                            if (!muted) audio.play();
                             object2.collided = true;
                             scene.remove(object[0]);
                         }
                     }
                 })
             })
-            
             // Show enemy banner if selected
             if (selectedEnemy && !document.getElementById('enemy-banner')) {
                 const banner = document.createElement('div');
@@ -249,14 +262,38 @@ class WorldLogic {
                 scene.remove(objects.cylinder5);
             }
 
+            let spaceship = objects.enemySpaceship;
+            let cannon = objects.cannonAttack;
             if (objects.cylinder2.collided === true && objects.cylinder3.collided === true && objects.cylinder4.collided === true && objects.cylinder5.collided === true) {
-                let audio = new Audio("./assets/alien-hum.wav");
-                audio.play();
-                gameStart();
+                // Cannon attack moves towards enemy spaceship
+                const xMovement = spaceship.position.x - cannon.position.x;
+                const yMovement = spaceship.position.y - cannon.position.y;
+                const zMovement = spaceship.position.z - cannon.position.z;
+                cannon.position.x += xMovement * 0.05;
+                cannon.position.y += yMovement * 0.05;
+                cannon.position.z += zMovement * 0.05;
+            }
+            
+            if (that.worldObjects.objectsBoundingBox[cannon.uuid]?.intersectsBox(that.worldObjects.objectsBoundingBox[spaceship.uuid])) {
+                spaceship.health -= 1;
+                ui.enemyHealth -= 1;
+                const task = document.getElementById('task')
+                task.children[1]?.remove();
+                const newTask = document.createElement('h2');
+                newTask.innerHTML = 'Eliminate enemies';
+                task.appendChild(newTask);
+                let audio = new Audio("./assets/metal-hit.wav");
+                if (!muted) audio.play();
+                cannon.position.x = 23;
+                cannon.position.y = 10;
+                cannon.position.z = 56;
                 objects.cylinder2.collided = false;
                 objects.cylinder3.collided = false;
                 objects.cylinder4.collided = false;
                 objects.cylinder5.collided = false;
+                let gameStartAudio = new Audio("./assets/alien-hum.wav");
+                if (!muted) gameStartAudio.play();
+                gameStart();
             }
 
             // Handle enemies hit by player projectiles
@@ -265,17 +302,15 @@ class WorldLogic {
                     scene.remove(enemy);
                     hitCount += 1;
                     ui.exp += 3;
-                    score += 500;
-                    document.getElementById("score").innerHTML = `Score: ${score}`;
-                    if (enemies.indexOf(enemy) === selectedEnemyIdx - 1) {
-                        selectedEnemyIdx = 0;
+                    if (enemies.indexOf(enemy) === selectedEnemyIdx) {
+                        selectedEnemyIdx = -1;
                         selectedEnemy = null;
                         scene.remove(selectedEnemyMesh)
                         selectedEnemyMesh = null;
                     }
                     enemies.splice(enemies.indexOf(enemy), 1);
                 } else {
-                    if (enemy.clock.getElapsedTime() > 1) {
+                    if (Math.floor(enemy.clock.getElapsedTime()) > 1) {
                         enemy.clock.start();
                         const beamGeometry = new THREE.SphereGeometry(1, 32, 32);
                         const beamMaterial = new THREE.MeshToonMaterial({map: enemyAttackTexture});
@@ -296,6 +331,12 @@ class WorldLogic {
                     scene.add(objects.cylinder3);
                     scene.add(objects.cylinder4);
                     scene.add(objects.cylinder5);
+                    const task = document.getElementById('task');
+                    task.children[1].remove();
+                    const newTask = document.createElement('h2');
+                    newTask.innerHTML = 'Destroy the space rocks to establish a clear line of sight between your cannon and the target!'
+                    task.appendChild(newTask)
+                
                 }
             })
 
@@ -316,8 +357,8 @@ class WorldLogic {
             // Handle player hit by enemy projectile, one second timeout between hits registering
             if (objects.player.collided === true && playerHitClock.getElapsedTime() > 1) {
                 if (!popUp) {
-                    let audio = new Audio("./assets/player-hit.mp3");
-                    audio.play();
+                    let audio = new Audio("./assets/player-hit.wav");
+                    if (!muted) audio.play();
                     // Show pop up damage inflicted
                     popUp = document.createElement("h1");
                     popUp.innerHTML = `-10`
@@ -347,17 +388,24 @@ class WorldLogic {
 
             // Call Ui#BuildUi to render most updated player attributes
             ui.buildUi();
-            
-            // Simulate gravity by stopping objects when y-coordinate coincides with ground plane
-            if (objects.cylinder2.position.y - 1.5 > plane.position.y) {
-                objects.cylinder2.position.y += -0.05;
-                objects.cylinder3.position.y += -0.05;
-                objects.cylinder4.position.y += -0.05;
-                objects.cylinder5.position.y += -0.05;
-            }
 
-            if (objects.player.position.y - 1.5 > plane.position.y) {
-                objects.player.position.y += -0.05;
+            // Simulate gravity by stopping objects when y-coordinate coincides with ground plane
+            if (objects.cylinder2.position.y - 10 > plane.position.y) {
+                objects.cylinder2.position.x += objects.cylinder2.direction.x
+                objects.cylinder2.position.y += -0.6;
+                objects.cylinder2.position.z += objects.cylinder2.direction.z
+
+                objects.cylinder3.position.x += objects.cylinder3.direction.x
+                objects.cylinder3.position.y += -0.6;
+                objects.cylinder3.position.z += objects.cylinder3.direction.z
+
+                objects.cylinder4.position.x += objects.cylinder4.direction.x
+                objects.cylinder4.position.y += -0.6;
+                objects.cylinder4.position.z += objects.cylinder4.direction.z
+
+                objects.cylinder5.position.x += objects.cylinder5.direction.x
+                objects.cylinder5.position.y += -0.6;
+                objects.cylinder5.position.z += objects.cylinder5.direction.z
             }
             
             // Camera always follows player
@@ -367,10 +415,10 @@ class WorldLogic {
             renderer.render(scene, camera);
             
             // Game over logic - reset all objects and display end game graph
-            if (ui.health <= 0) {
+            if (ui.health <= 0 || spaceship.health <= 0) {
                 if (selectedEnemyMesh) {
                     selectedEnemy = null;
-                    selectedEnemyIdx = 0;
+                    selectedEnemyIdx = -1;
                     scene.remove(selectedEnemyMesh);
                     selectedEnemyMesh = null;
                 }
@@ -381,6 +429,7 @@ class WorldLogic {
                 objects.player.position.x = 0;
                 objects.player.position.y = 1.5;
                 objects.player.position.z = 0;
+                spaceship.health = 10;
                 ui.health = 100;
                 ui.mana = 100;
                 ui.potions = 3;
@@ -390,7 +439,7 @@ class WorldLogic {
                 scene.add(objects.cylinder3);
                 scene.add(objects.cylinder4);
                 scene.add(objects.cylinder5);
-                camera.position.set(0, 20, 50);
+                camera.position.set(0, 10, 50);
 
                 let gameOver = document.getElementById("endgame-stats");
                 gameOver.style.visibility = "visible";
