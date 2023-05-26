@@ -151,6 +151,10 @@ class World {
         controls.enableDamping = true;
         controls.mouseButtons.RIGHT = THREE.MOUSE.ROTATE;
         controls.mouseButtons.LEFT = THREE.MOUSE.PAN;
+        controls.minDistance = 30;
+        controls.maxDistance = 70;
+        controls.minPolarAngle = 1 * Math.PI / 3
+        controls.maxPolarAngle = 0.9 * Math.PI / 2;
 
         // Pass objects to other classes
         this.scene = scene;

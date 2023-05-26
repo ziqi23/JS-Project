@@ -21,14 +21,12 @@ let objects = new WorldObjects(world);
 let ui = new Ui()
 let numLoads = 0;
 
-export async function load() {
+export function load() {
     numLoads += 1;
-    const delay = require('delay')
-    await delay(1000)
     if (numLoads === 6) {
         const loadingPage = document.getElementById('loading-page')
         const loadingAnimation = document.getElementById('loading-animation')
-        loadingPage.removeChild(loadingAnimation)
+        if (loadingAnimation) loadingPage.removeChild(loadingAnimation)
         const instructions = document.createElement('IMG')
         instructions.src = './assets/instructions-v2.png'
         instructions.style.width = '720px';

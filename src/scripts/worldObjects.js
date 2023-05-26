@@ -60,7 +60,7 @@ class WorldObjects {
             obj.scale.y = 15;
             obj.scale.z = 15;
             obj.position.x = (Math.random() * 100) - 50;
-            obj.position.y = 30;
+            obj.position.y = 80;
             obj.position.z = -((Math.random() * 100) + 50);
             obj.rotation.z = Math.random() * Math.PI;
             obj.direction = {x: Math.random() - 0.5, z: Math.random() - 0.5}
@@ -76,7 +76,7 @@ class WorldObjects {
             obj.scale.y = 15;
             obj.scale.z = 15;
             obj.position.x = (Math.random() * 100) - 50;
-            obj.position.y = 30;
+            obj.position.y = 80;
             obj.position.z = -((Math.random() * 100) + 50);
             obj.rotation.z = Math.random() * Math.PI;
             obj.direction = {x: Math.random() - 0.5, z: Math.random() - 0.5}
@@ -92,7 +92,7 @@ class WorldObjects {
             obj.scale.y = 15;
             obj.scale.z = 15;
             obj.position.x = (Math.random() * 100) - 50;
-            obj.position.y = 30;
+            obj.position.y = 80;
             obj.position.z = -((Math.random() * 100) + 50);
             obj.rotation.z = Math.random() * Math.PI;
             obj.direction = {x: Math.random() - 0.5, z: Math.random() - 0.5}
@@ -108,7 +108,7 @@ class WorldObjects {
             obj.scale.y = 15;
             obj.scale.z = 15;
             obj.position.x = (Math.random() * 100) - 50;
-            obj.position.y = 30;
+            obj.position.y = 80;
             obj.position.z = -((Math.random() * 100) + 50);
             obj.rotation.z = Math.random() * Math.PI;
             obj.direction = {x: Math.random() - 0.5, z: Math.random() - 0.5}
@@ -123,7 +123,7 @@ class WorldObjects {
             obj.scale.y = 12;
             obj.scale.z = 12;
             obj.rotation.x = Math.PI / 16;
-            obj.position.y = 20;
+            obj.position.y = 30;
             obj.position.z = -250;
             const texture = new THREE.TextureLoader().load('./assets/dark-metal-grid-1.jpg');
             obj.material = new THREE.MeshStandardMaterial({map: texture});
@@ -131,6 +131,7 @@ class WorldObjects {
                 child.material = new THREE.MeshStandardMaterial({map: texture});
             })
             obj.name = 'enemySpaceship'
+            obj.nametag = 'Alien Spaceship'
             obj.health = 10;
             obj.clock = new THREE.Clock();
             that.scene.add(obj);

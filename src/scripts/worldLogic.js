@@ -78,18 +78,35 @@ class WorldLogic {
         let selectedEnemyIdx = -1;
         let selectedEnemy;
         let selectedEnemyMesh;
-        window.addEventListener('keydown', handleTab)
+        window.addEventListener('keydown', handleTab);
         function handleTab(e) {
             e.preventDefault()
             if (selectedEnemyMesh) {
-                scene.remove(selectedEnemyMesh)
+                document.getElementById('enemy-banner')?.remove();
+                scene.remove(selectedEnemyMesh);
             }
             if (e.key === 'Tab') {
-                selectedEnemyIdx += 1
-                selectedEnemy = enemies[selectedEnemyIdx % enemies.length]
+                selectedEnemyIdx += 1;
+                selectedEnemyIdx %= enemies.length + 1;
+                if (selectedEnemyIdx === enemies.length) {
+                    selectedEnemy = objects.enemySpaceship;
+                    document.getElementById('enemy-health-empty').style.visibility = 'visible'
+                    document.getElementById('enemy-health-full').style.visibility = 'visible'
+                }
+                else {
+                    selectedEnemy = enemies[selectedEnemyIdx];
+                    document.getElementById('enemy-health-empty').style.visibility = 'hidden'
+                    document.getElementById('enemy-health-full').style.visibility = 'hidden'
+                }
             }
             const boundingBox = new THREE.Box3().setFromObject(selectedEnemy);
-            const selectedEnemyGeometry = new THREE.RingGeometry(5, 6, 8);
+            let selectedEnemyGeometry;
+            if (selectedEnemy === objects.enemySpaceship) {
+                selectedEnemyGeometry = new THREE.RingGeometry(30, 40, 8);
+            }
+            else {
+                selectedEnemyGeometry = new THREE.RingGeometry(5, 6, 8);
+            }
             const selectedEnemyMaterial = new THREE.MeshStandardMaterial({color: 0xFFFFFF, side: THREE.DoubleSide});
 
             selectedEnemyMesh = new THREE.Mesh(selectedEnemyGeometry, selectedEnemyMaterial);
@@ -107,7 +124,6 @@ class WorldLogic {
         const enemyAttackTexture = new THREE.TextureLoader().load('./assets/enemy-proj.png');
 
         async function gameStart() {
-            selectedEnemyIdx = 0;
             for (let i = 0; i < 5 + 2 * (round - 1); i++) {
                 const loader = new OBJLoader();
                 await loader.load("./assets/ufoobj.obj", function(obj) {
@@ -119,6 +135,7 @@ class WorldLogic {
                     obj.position.x = (Math.random() - 0.5) * 70;
                     obj.position.z = Math.random() * -100 - 25;
                     obj.name = "enemy"
+                    obj.nametag = 'Enemy Minion'
                     // Each enemy has an internal timer to space attacks between
                     obj.clock = new THREE.Clock();
                     scene.add(obj);
@@ -206,7 +223,6 @@ class WorldLogic {
         // Once all logic established above, run update() which handles frame by frame rendering
         function update() {
             requestAnimationFrame(update);
-
             // Call WorldObjects#Move method to handle movement
             worldObjects.move();
 
@@ -242,7 +258,7 @@ class WorldLogic {
                 const banner = document.createElement('div');
                 banner.id = 'enemy-banner';
                 document.getElementById('body').appendChild(banner);
-                banner.innerHTML = selectedEnemy.name
+                banner.innerHTML = selectedEnemy.nametag
             }
             else if (!selectedEnemy) {
                 document.getElementById('enemy-banner')?.remove();
@@ -280,7 +296,7 @@ class WorldLogic {
                 const task = document.getElementById('task')
                 task.children[1]?.remove();
                 const newTask = document.createElement('h2');
-                newTask.innerHTML = 'Eliminate enemies';
+                newTask.innerHTML = 'Eliminate enemy minions!';
                 task.appendChild(newTask);
                 let audio = new Audio("./assets/metal-hit.wav");
                 if (!muted) audio.play();
@@ -307,6 +323,9 @@ class WorldLogic {
                         selectedEnemy = null;
                         scene.remove(selectedEnemyMesh)
                         selectedEnemyMesh = null;
+                    }
+                    if (enemies.indexOf(enemy) < selectedEnemyIdx) {
+                        selectedEnemyIdx -= 1;
                     }
                     enemies.splice(enemies.indexOf(enemy), 1);
                 } else {
@@ -392,19 +411,19 @@ class WorldLogic {
             // Simulate gravity by stopping objects when y-coordinate coincides with ground plane
             if (objects.cylinder2.position.y - 10 > plane.position.y) {
                 objects.cylinder2.position.x += objects.cylinder2.direction.x
-                objects.cylinder2.position.y += -0.6;
+                objects.cylinder2.position.y += -1;
                 objects.cylinder2.position.z += objects.cylinder2.direction.z
 
                 objects.cylinder3.position.x += objects.cylinder3.direction.x
-                objects.cylinder3.position.y += -0.6;
+                objects.cylinder3.position.y += -1;
                 objects.cylinder3.position.z += objects.cylinder3.direction.z
 
                 objects.cylinder4.position.x += objects.cylinder4.direction.x
-                objects.cylinder4.position.y += -0.6;
+                objects.cylinder4.position.y += -1;
                 objects.cylinder4.position.z += objects.cylinder4.direction.z
 
                 objects.cylinder5.position.x += objects.cylinder5.direction.x
-                objects.cylinder5.position.y += -0.6;
+                objects.cylinder5.position.y += -1;
                 objects.cylinder5.position.z += objects.cylinder5.direction.z
             }
             
@@ -413,7 +432,6 @@ class WorldLogic {
 
             // Render everything above
             renderer.render(scene, camera);
-            
             // Game over logic - reset all objects and display end game graph
             if (ui.health <= 0 || spaceship.health <= 0) {
                 if (selectedEnemyMesh) {
@@ -463,12 +481,25 @@ class WorldLogic {
                         break;
                 }
                 let stats = document.getElementById("stats");
-                stats.innerHTML = `Total number of shots: ${shotCount}<br>
-                Total hits: ${hitCount}<br>
-                Accuracy: ${shotCount ? Math.floor(hitCount / shotCount * 100) : 0}%<br>
-                Total time survived: ${Math.floor(playTimeClock.getElapsedTime())} seconds<br>
-                Rating: ${rating}<br><br>
-                Press 'enter' to play again!`
+                if (spaceship.health <= 0) {
+                    stats.innerHTML = `You Won! <br><br>
+                    Total number of shots: ${shotCount}<br>
+                    Total hits: ${hitCount}<br>
+                    Accuracy: ${shotCount ? Math.floor(hitCount / shotCount * 100) : 0}%<br>
+                    Total time survived: ${Math.floor(playTimeClock.getElapsedTime())} seconds<br>
+                    Rating: ${rating}<br><br>
+                    Press 'enter' to play again!`
+                }
+                else {
+                    stats.innerHTML = `You were defeated! <br><br>
+                    Total number of shots: ${shotCount}<br>
+                    Total hits: ${hitCount}<br>
+                    Accuracy: ${shotCount ? Math.floor(hitCount / shotCount * 100) : 0}%<br>
+                    Total time survived: ${Math.floor(playTimeClock.getElapsedTime())} seconds<br>
+                    Rating: ${rating}<br><br>
+                    Press 'enter' to play again!`
+                }
+                playTimeClock.start();
             }
         }
         update();
